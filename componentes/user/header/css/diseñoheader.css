@@ -1,0 +1,33 @@
+.header{
+    background-color: antiquewhite;
+    /* display: flex; */
+    justify-content: space-between;
+    /* padding: 1% 1%; */
+}
+
+.dropdownUser{
+    background-color: aquamarine;
+    padding-top: 1.5%;
+}
+
+.logo{
+    width: 100%;
+    display: flex;
+    background-color: aqua;
+}
+
+.collapse{
+    margin-left: 2%;
+}
+
+
+.dropdown{
+    margin-right: 5%;
+}
+
+
+/* @media (min-width: 1024px){
+    .menu{
+        margin-right: 50%;
+    }
+} */

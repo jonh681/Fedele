@@ -1,0 +1,67 @@
+
+.adminCursos{
+    /* background-color: antiquewhite; */
+    width: 80%;
+    padding: 5%;
+    margin: auto;
+}
+
+.tituloAdmin{
+    display: flex;
+    justify-content: space-between;
+}
+
+.cursosAdmin{
+    text-align: center;
+}
+
+.upload-box {
+    border: 2px dashed #ccc;
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    color: #555;
+    transition: background-color 0.3s ease;
+}
+.upload-box:hover {
+    background-color: #f9f9f9;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+#preview {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.file-preview {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+    max-width: 150px;
+    position: relative;
+}
+
+.file-preview img {
+    max-width: 100%;
+    max-height: 100px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.remove-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}

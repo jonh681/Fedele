@@ -1,0 +1,41 @@
+/* body{
+    padding: 10%;
+    height: 100vh;
+    overflow: hidden;
+} */
+
+.title{
+    width: 100%;
+    padding: 3%;
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 10;
+}
+
+.container{
+    justify-content: center;
+    justify-items: center;
+    width: 70vh;
+    height: 100%;
+    /* overflow: auto; */
+}
+
+.container h1{
+    text-align: center;
+}
+
+h1,h3, h4{
+    color: #234db8;
+}
+
+.contenedorCursos{
+    padding: 2%;
+    width: 65%;
+}
+
+
+
+.skeleton{
+    margin: 2% 0;
+}

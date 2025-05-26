@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="cursos/css/diseñoContenido.css">
+</head>
+<body>
+    <div class="adminCursos">
+        <div class="tituloAdmin">
+            <div style="color: #234db8;">
+                <h2>Mis cursos</h2>
+            </div>
+            <div>
+                <button type="button" class="btn btn-outline-secondary"  data-bs-toggle="modal" data-bs-target="#exampleModal">+ crear curso</button>
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Añadir un nuevo curso</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- --------------------------------------------- -->
+                                <div class="accordion" id="accordionPanelsStayOpenExample">
+                                    <!-- General -->
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
+                                                General
+                                            </button>
+                                        </h2>
+                                        <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
+                                            <div class="accordion-body">
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="nombreCurso" required>
+                                                    <label for="floatingInput">Nombre completo del curso:</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
+                                            <div class="accordion-body">
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="nombreCorto" >
+                                                    <label for="floatingInput">Nombre corto del curso:</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
+                                            <div class="accordion-body">
+                                                <div class="form-floating mb-3">
+                                                    <input type="datetime-local" class="form-control" id="datestart" required>
+                                                    <label for="floatingInput">Fecha de inicio del curso:</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
+                                            <div class="accordion-body">
+                                                <div class="form-floating mb-3">
+                                                    <input type="datetime-local" class="form-control" id="dateend" >
+                                                    <label for="floatingInput">Fecha de termino de lcurso:</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Descripcion -->
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="true" aria-controls="panelsStayOpen-collapseTwo">
+                                                Descripcion
+                                            </button>
+                                        </h2>
+                                        <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
+                                            <div class="form-floating mt-3">
+                                                <textarea class="form-control" placeholder="Leave a comment here" id="descripcion" style="height: 100px" required></textarea>
+                                                <label for="floatingTextarea2">Resumen de este curso:</label>
+                                            </div>
+                                            
+                                            <div class="p-3">
+                                                <p>Imagen del curso</p>
+                                                <div style="display: flex; justify-content: center; justify-items: center; padding: 3%;">
+                                                    <label for="fileUpload" class="upload-box" id="drop-area">
+                                                        <div>
+                                                            <img src="https://cdn-icons-png.flaticon.com/512/724/724933.png" alt="Subir" width="40"><br>
+                                                            Arrastre y suelte los archivos aquí o haga clic para subirlos
+                                                        </div>
+                                                    </label>
+                                                    <input type="file" id="fileUpload" multiple>
+                                                    <div id="preview"></div>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                    <!-- contenido -->
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                                                Contenido del curso
+                                            </button>
+                                        </h2>
+                                        <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse">
+                                            <div class="accordion-body">
+                                                <div class="form-floating mt-3">
+                                                    <input type="number" class="form-control is-invalid" id="secciones" >
+                                                    <label for="floatingTextarea2">¿Cuantas secciones necesitas?</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <!-- --------------------------------------------------------- -->
+                                
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                <button type="button" class="btn btn-primary" onclick="crearCurso()">Crear curso</a></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+
+        <div class="cursosAdmin">
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileUpload');
+        const dropArea = document.getElementById('drop-area');
+        const preview = document.getElementById('preview');
+    
+        let filesArray = [];
+    
+        function updateInputFiles() {
+            const dataTransfer = new DataTransfer();
+            filesArray.forEach(file => dataTransfer.items.add(file));
+            fileInput.files = dataTransfer.files;
+        }
+    
+        function removeFile(index) {
+            filesArray.splice(index, 1);
+            showPreview();
+            updateInputFiles();
+        }
+    
+        function showPreview() {
+            preview.innerHTML = '';
+            filesArray.forEach((file, index) => {
+                const fileDiv = document.createElement('div');
+                fileDiv.className = 'file-preview';
+    
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-btn';
+                removeBtn.innerHTML = '×';
+                removeBtn.onclick = () => removeFile(index);
+        
+                if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    fileDiv.innerHTML = `<img src="${reader.result}" alt="${file.name}"><span>${file.name}</span>`;
+                    fileDiv.appendChild(removeBtn);
+                    preview.appendChild(fileDiv);
+                };
+                reader.readAsDataURL(file);
+                } else {
+                fileDiv.innerHTML = `<span>${file.name}</span>`;
+                fileDiv.appendChild(removeBtn);
+                preview.appendChild(fileDiv);
+                }
+            });
+        }
+    
+        fileInput.addEventListener('change', () => {
+            filesArray = [...filesArray, ...fileInput.files];
+            showPreview();
+            updateInputFiles();
+        });
+    
+        dropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropArea.style.backgroundColor = '#f0f0f0';
+        });
+    
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.style.backgroundColor = '';
+        });
+    
+        dropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropArea.style.backgroundColor = '';
+            const droppedFiles = Array.from(e.dataTransfer.files);
+            filesArray = [...filesArray, ...droppedFiles];
+            showPreview();
+            updateInputFiles();
+        });
+    
+        function crearCurso() {
+            const nombre = document.getElementById('nombreCurso').value.trim();
+            const nombreCorto = document.getElementById('nombreCorto').value.trim();
+            const descripcion = document.getElementById('descripcion').value.trim();
+            const fechaInicio = document.getElementById('datestart').value;
+            const fechaFin = document.getElementById('dateend').value;
+            const secciones = document.getElementById('secciones').value || 1;
+            const imagen = document.getElementById('fileUpload').files[0];
+
+            if (!nombre || !descripcion || !fechaInicio) {
+                alert("Por favor, completa todos los campos obligatorios.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('nombreCurso', nombre);
+            formData.append('nombreCorto', nombreCorto);
+            formData.append('descripcion', descripcion);
+            formData.append('fechaInicio', fechaInicio);
+            formData.append('fechaFin', fechaFin);
+            formData.append('secciones', secciones);
+
+            if (imagen) {
+                formData.append('imagenCurso', imagen);
+            }
+
+            fetch('/fedele/componentes/php/crearCurso.php', {
+                method: 'POST',
+                body: formData // NO pongas headers aquí, el navegador los configura automáticamente
+            })
+            .then(res => res.text())
+            .then(nombreArchivo => {
+                alert("✅ Curso creado correctamente: " + nombreArchivo);
+                // Redirige al curso
+                const nombreCarpeta = nombre.replace(/[^A-Za-z0-9_-]/g, '_');
+                window.location.href = `/fedele/componentes/php/cursosCreados/${nombreCarpeta}/${nombreArchivo}`;
+                window.location.replace(ruta);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("❌ Hubo un error al crear el curso.");
+            });
+        }
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+</body>
+</html> 
