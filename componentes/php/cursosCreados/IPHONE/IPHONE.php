@@ -104,7 +104,7 @@
                                         <div class="col recurso-item" id="url1" onclick="showInputs('url', this, 1)">
                                             <i class="bi bi-globe"></i><br><span>URL</span>
                                         </div>
-                                        <div class="col recurso-item" id="url1" onclick="showInputs('libro', this, 1)">
+                                        <div class="col recurso-item" id="libro1" onclick="showInputs('libro', this, 1)">
                                             <i class="bi bi-book"></i><br><span>Libro</span>
                                         </div>
                                     </div>
@@ -211,7 +211,7 @@
                                         <div class="col recurso-item" id="url2" onclick="showInputs('url', this, 2)">
                                             <i class="bi bi-globe"></i><br><span>URL</span>
                                         </div>
-                                        <div class="col recurso-item" id="url2" onclick="showInputs('libro', this, 2)">
+                                        <div class="col recurso-item" id="libro2" onclick="showInputs('libro', this, 2)">
                                             <i class="bi bi-book"></i><br><span>Libro</span>
                                         </div>
                                     </div>
@@ -232,12 +232,119 @@
             </div>
         </div>
         
+        <div class="contentPrincipal mt-3">
+            <div class="d-inline-flex gap-1" style="width:50%;">
+                <div class="subtemas" style="width: 100%;">
+                    <button id="toggleBtn3" class="btn btn-primary boton" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample3" aria-expanded="false" aria-controls="collapseExample3">
+                        <i id="toggleIcon3" class="bi bi-chevron-right"></i>
+                    </button>
+                    <div class="editable-title" id="titleContainer3">
+                        <span id="titleText3">Sección 3</span>
+                        <i class="bi bi-pencil-fill edit-icon" id="editIcon3"></i>
+                        <i class="bi bi-floppy save-icon ms-2 d-none" id="saveIcon<?= 3 ?>" style="cursor:pointer;" title="Guardar cambios"></i>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="collapse" id="collapseExample3">
+                <div class="card card-body" style="border: none;">
+                    <div class="lista-recursos mt-3" id="listaRecursos3"></div>
+                    <div class="line-container">
+                        <div class="line"></div>
+                        <div class="button-wrapper">
+                            <button class="custom-button" data-bs-toggle="modal" data-bs-target="#modalPrincipal3">
+                                <i class="bi bi-plus"></i> Añadir una actividad o recurso
+                            </button>
+                        </div>
+                        <div class="line"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalPrincipal3" tabindex="-1" aria-labelledby="modalPrincipalLabel3" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="modalPrincipalLabel3">Añadir una actividad o recurso</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-12">
+                            <div class="list-group list-group-flush">
+                                <button class="list-group-item list-group-item-action" data-bs-target="#modalRecursos3" data-bs-toggle="modal" data-bs-dismiss="modal">
+                                Crear evaluaciones o recursos: <br>
+                                En esta sección podrás subir Archivos, Áreas de texto y medios, carpetas, libros, URL, actividades, examenes.
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer"></div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="modal fade" id="modalRecursos3" tabindex="-1" aria-labelledby="modalRecursosLabel3" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="modalRecursosLabel3">Crear Recurso o Actividad</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="nav nav-tabs" id="recursoActividadTabs3" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="recursos-tab3" data-bs-toggle="tab" data-bs-target="#recursos-pane3" type="button" role="tab" aria-controls="recursos-pane" aria-selected="true">Recursos</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="actividades-tab3" data-bs-toggle="tab" data-bs-target="#actividades-pane3" type="button" role="tab" aria-controls="actividades-pane" aria-selected="false">Actividades</button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content mt-3" id="recursoActividadTabsContent3">
+                            <!-- TAB RECURSOS -->
+                            <div class="tab-pane fade show active" id="recursos-pane3" role="tabpane3" aria-labelledby="recursos-tab3" tabindex="0">
+                                <div class="container text-center" style="color: rgb(3, 187, 133); font-size: large;">
+                                    <div class="row">
+                                        <div class="col recurso-item" id="archivos3" onclick="showInputs('file', this, 3)">
+                                            <i class="bi bi-file-text"></i><br><span>Documentos</span>
+                                        </div>
+                                        <div class="col recurso-item" id="texto3" onclick="showInputs('text', this, 3)">
+                                            <i class="bi bi-body-text"></i><br><span>Texto</span>
+                                        </div>
+                                        <div class="col recurso-item" id="media3" onclick="showInputs('media', this, 3)">
+                                            <i class="bi bi-archive-fill"></i><br><span>Media</span>
+                                        </div>
+                                        <div class="col recurso-item" id="url3" onclick="showInputs('url', this, 3)">
+                                            <i class="bi bi-globe"></i><br><span>URL</span>
+                                        </div>
+                                        <div class="col recurso-item" id="libro3" onclick="showInputs('libro', this, 3)">
+                                            <i class="bi bi-book"></i><br><span>Libro</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="inputsRecursos mt-3" id="inputsContainer3"></div>
+
+                            </div>
+                            <!-- TAB ACTIVIDADES -->
+                            <div class="tab-pane fade" id="actividades-pane3" role="tabpanel" aria-labelledby="actividades-tab3" tabindex="0">
+                                <p>Hola desde Actividades3</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         </div> <!-- end container -->
     
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
     
         <script>
-            for (let i = 1; i <= <?php echo 2; ?>; i++) {
+            for (let i = 1; i <= <?php echo 3; ?>; i++) {
                 const titleContainer = document.getElementById('titleContainer' + i);
                 const titleText = document.getElementById('titleText' + i);
                 const editIcon = document.getElementById('editIcon' + i);
@@ -317,7 +424,7 @@
                     });
                 }
             }
-            for (let i = 1; i <= <?php echo 2; ?>; i++) {
+            for (let i = 1; i <= <?php echo 3; ?>; i++) {
                 const button = document.getElementById('toggleBtn' + i);
                 const icon = document.getElementById('toggleIcon' + i);
                 const content = document.getElementById('collapseExample' + i);
@@ -343,17 +450,75 @@
             }
 
             function guardarRecurso(index) {
-                const titulo = document.getElementById('titleInput' + index)?.value || 'Sin título';
+                const titulo = document.getElementById('titleInput' + index)?.value || '';
+                let tituloLibro = document.getElementById('titleInputLibro' + index)?.value || '';
                 const descripcion = document.getElementById('floatingTextarea' + index)?.value || '';
                 const archivo = document.getElementById('fileInput' + index)?.files?.[0] || null;
                 const url = document.getElementById('floatingInputGroup' + index)?.value || '';
                 const seccionTitulo = document.getElementById('titleText' + index)?.textContent || 'Seccion_Desconocida';
 
+                const tituloRecurso = tituloLibro !== '' ? tituloLibro : (titulo !== '' ? titulo : 'Sin título');
+                const esLibro = tituloRecurso.toLowerCase().includes('libro'); 
+
+                console.log("📚 Título del recurso:", tituloRecurso);
+
+                console.log("📚 libro o no?", esLibro);
+
+
+
+                console.log("📚 Datos principales del libro:", {
+                    tituloRecurso,
+                    descripcion,
+                    archivo,
+                    url,
+                    seccionTitulo
+                });
+
+                const numeroPaginasElement = document.getElementById('numeroPaginas' + index);
+                const numPaginas = numeroPaginasElement ? parseInt(numeroPaginasElement.value) : 1;  // Valor por defecto 1 si no existe
+                console.log(`📖 Número de páginas: ${numPaginas}`);                
+
+                const paginas = [];
+
+                // Recolectar información de cada página
+                for (let i = 1; i <= numPaginas; i++) {
+                    const texto = document.getElementById('textoPagina' + index + '_' + i)?.value || '';
+                    const imagen = document.getElementById('imagenPagina' + index + '_' + i)?.files?.[0] || null;
+                    const urlPagina = document.getElementById('urlPagina' + index + '_' + i)?.value || '';
+                    const youtube = document.getElementById('youtubePagina' + index + '_' + i)?.value || '';
+
+                    console.log(`📄 Página ${i} - Datos:`, {
+                        texto,
+                        imagen: imagen ? imagen.name : 'Sin imagen',
+                        url: urlPagina,
+                        youtube
+                    });
+
+                    // Crear objeto para cada página
+                    const paginaInfo = {
+                        texto,
+                        imagen: imagen ? imagen.name : '',  // Solo enviar el nombre del archivo, no el archivo completo
+                        url: urlPagina,
+                        youtube
+                    };
+
+                    paginas.push(paginaInfo);
+                }
+
+                // Verificar que las páginas han sido correctamente recolectadas
+                console.log("📚 Información de las páginas:", paginas);
+
+                // Crear FormData para enviar todos los datos
                 const formData = new FormData();
-                formData.append('titulo', titulo);
+                // formData.append('titulo', titulo);
+                // formData.append('tituloLibro', tituloLibro)
+                formData.append('tituloRecurso', tituloRecurso);
                 formData.append('descripcion', descripcion);
                 formData.append('url', url);
                 formData.append('seccion', seccionTitulo);
+                formData.append('paginas', JSON.stringify(paginas));  // Convertir las páginas a una cadena JSON para enviarlas
+                formData.append('esLibro', esLibro);  // Añadir esta información para saber si es un libro
+                formData.append('numPaginas', numPaginas);  // Enviar el número de páginas
 
                 console.log("➡ pathname completo:", window.location.pathname);
 
@@ -371,12 +536,22 @@
                     formData.append('archivo', archivo);
                 }
 
+                // Agregar las imágenes de las páginas (si existen)
+                paginas.forEach((pagina, i) => {
+                    if (pagina.imagen) {
+                        formData.append('imagen' + i, document.getElementById('imagenPagina' + index + '_' + (i+1)).files[0]);
+                    }
+                });
+
+                // Realizar la solicitud fetch para guardar los datos
                 fetch('guardar_recurso.php', {
                     method: 'POST',
                     body: formData
                 })
                 .then(res => res.text())
                 .then(data => {
+                    console.log("✅ Respuesta del servidor:", data);
+
                     const lista = document.getElementById('listaRecursos' + index);
                     if (lista) {
                         const nuevo = document.createElement('div');
@@ -482,21 +657,35 @@
                 } else if (option === 'libro') {
                     container.innerHTML = `
                         <div class="form-floating mb-3 mt-3">
-                            <input type="text" class="form-control" id="titleInput${index}" placeholder="Título del libro">
-                            <label for="titleInput${index}">Título del libro</label>
+                            <input type="text" class="form-control" id="titleInputLibro${index}" placeholder="Título del libro" 
+                                oninput="agregarPalabraLibro(${index})">
+                            <label for="titleInputLibro${index}">Título del libro</label>
                         </div>
 
-                        <div class="form-floating mb-3">
+                        <div class="form-floating mt-3">
+                            <textarea class="form-control" id="floatingTextarea${index}" style="height: 100px"></textarea>
+                            <label for="floatingTextarea${index}">Descripción</label>
+                        </div>
+
+                        <div class="form-floating mt-3">
                             <input type="number" class="form-control" id="numeroPaginas${index}" placeholder="Número de páginas" min="1" value="1">
                             <label for="numeroPaginas${index}">Número de páginas</label>
                         </div>
 
-                        <div class="text-end mb-3">
+                        <div class="text-end mt-3 mb-3">
                             <button class="btn btn-primary" onclick="generarPaginasLibro(${index})">Generar contenido por página</button>
                         </div>
 
                         <div id="contenedorPaginas${index}"></div>
                     ` + generarBotonGuardar(index);
+                }
+            }
+
+            function agregarPalabraLibro(index) {
+                const titleInput = document.getElementById('titleInputLibro' + index);
+                
+                if (titleInput && !titleInput.value.toLowerCase().startsWith('libro ')) {
+                    titleInput.value = 'Libro ' + titleInput.value;
                 }
             }
 

@@ -1,5 +1,5 @@
 Nombre corto: prueba3
-Fecha de inicio: 2025-05-25T15:09
-Fecha de fin: 2025-05-25T15:09
-Descripción: pruebas 2
-Secciones: 2
+Fecha de inicio: 2025-05-27T10:40
+Fecha de fin: 2025-06-04T10:40
+Descripción: p
+Secciones: 3

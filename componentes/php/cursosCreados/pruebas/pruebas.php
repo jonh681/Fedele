@@ -344,17 +344,75 @@
             }
 
             function guardarRecurso(index) {
-                const titulo = document.getElementById('titleInput' + index)?.value || 'Sin título';
+                const titulo = document.getElementById('titleInput' + index)?.value || '';
+                let tituloLibro = document.getElementById('titleInputLibro' + index)?.value || '';
                 const descripcion = document.getElementById('floatingTextarea' + index)?.value || '';
                 const archivo = document.getElementById('fileInput' + index)?.files?.[0] || null;
                 const url = document.getElementById('floatingInputGroup' + index)?.value || '';
                 const seccionTitulo = document.getElementById('titleText' + index)?.textContent || 'Seccion_Desconocida';
 
+                const tituloRecurso = tituloLibro !== '' ? tituloLibro : (titulo !== '' ? titulo : 'Sin título');
+                const esLibro = tituloRecurso.toLowerCase().includes('libro'); 
+
+                console.log("📚 Título del recurso:", tituloRecurso);
+
+                console.log("📚 libro o no?", esLibro);
+
+
+
+                console.log("📚 Datos principales del libro:", {
+                    tituloRecurso,
+                    descripcion,
+                    archivo,
+                    url,
+                    seccionTitulo
+                });
+
+                const numeroPaginasElement = document.getElementById('numeroPaginas' + index);
+                const numPaginas = numeroPaginasElement ? parseInt(numeroPaginasElement.value) : 1;  // Valor por defecto 1 si no existe
+                console.log(`📖 Número de páginas: ${numPaginas}`);                
+
+                const paginas = [];
+
+                // Recolectar información de cada página
+                for (let i = 1; i <= numPaginas; i++) {
+                    const texto = document.getElementById('textoPagina' + index + '_' + i)?.value || '';
+                    const imagen = document.getElementById('imagenPagina' + index + '_' + i)?.files?.[0] || null;
+                    const urlPagina = document.getElementById('urlPagina' + index + '_' + i)?.value || '';
+                    const youtube = document.getElementById('youtubePagina' + index + '_' + i)?.value || '';
+
+                    console.log(`📄 Página ${i} - Datos:`, {
+                        texto,
+                        imagen: imagen ? imagen.name : 'Sin imagen',
+                        url: urlPagina,
+                        youtube
+                    });
+
+                    // Crear objeto para cada página
+                    const paginaInfo = {
+                        texto,
+                        imagen: imagen ? imagen.name : '',  // Solo enviar el nombre del archivo, no el archivo completo
+                        url: urlPagina,
+                        youtube
+                    };
+
+                    paginas.push(paginaInfo);
+                }
+
+                // Verificar que las páginas han sido correctamente recolectadas
+                console.log("📚 Información de las páginas:", paginas);
+
+                // Crear FormData para enviar todos los datos
                 const formData = new FormData();
-                formData.append('titulo', titulo);
+                // formData.append('titulo', titulo);
+                // formData.append('tituloLibro', tituloLibro)
+                formData.append('tituloRecurso', tituloRecurso);
                 formData.append('descripcion', descripcion);
                 formData.append('url', url);
                 formData.append('seccion', seccionTitulo);
+                formData.append('paginas', JSON.stringify(paginas));  // Convertir las páginas a una cadena JSON para enviarlas
+                formData.append('esLibro', esLibro);  // Añadir esta información para saber si es un libro
+                formData.append('numPaginas', numPaginas);  // Enviar el número de páginas
 
                 console.log("➡ pathname completo:", window.location.pathname);
 
@@ -372,12 +430,22 @@
                     formData.append('archivo', archivo);
                 }
 
+                // Agregar las imágenes de las páginas (si existen)
+                paginas.forEach((pagina, i) => {
+                    if (pagina.imagen) {
+                        formData.append('imagen' + i, document.getElementById('imagenPagina' + index + '_' + (i+1)).files[0]);
+                    }
+                });
+
+                // Realizar la solicitud fetch para guardar los datos
                 fetch('guardar_recurso.php', {
                     method: 'POST',
                     body: formData
                 })
                 .then(res => res.text())
                 .then(data => {
+                    console.log("✅ Respuesta del servidor:", data);
+
                     const lista = document.getElementById('listaRecursos' + index);
                     if (lista) {
                         const nuevo = document.createElement('div');
@@ -483,21 +551,36 @@
                 } else if (option === 'libro') {
                     container.innerHTML = `
                         <div class="form-floating mb-3 mt-3">
-                            <input type="text" class="form-control" id="titleInput${index}" placeholder="Título del libro">
-                            <label for="titleInput${index}">Título del libro</label>
+                            <input type="text" class="form-control" id="titleInputLibro${index}" placeholder="Título del libro" 
+                                oninput="agregarPalabraLibro(${index})">
+                            <label for="titleInputLibro${index}">Título del libro</label>
                         </div>
 
-                        <div class="form-floating mb-3">
+                        <div class="form-floating mt-3">
+                            <textarea class="form-control" id="floatingTextarea${index}" style="height: 100px"></textarea>
+                            <label for="floatingTextarea${index}">Descripción</label>
+                        </div>
+
+                        <div class="form-floating mt-3">
                             <input type="number" class="form-control" id="numeroPaginas${index}" placeholder="Número de páginas" min="1" value="1">
                             <label for="numeroPaginas${index}">Número de páginas</label>
                         </div>
 
-                        <div class="text-end mb-3">
+                        <div class="text-end mt-3 mb-3">
                             <button class="btn btn-primary" onclick="generarPaginasLibro(${index})">Generar contenido por página</button>
                         </div>
 
                         <div id="contenedorPaginas${index}"></div>
                     ` + generarBotonGuardar(index);
+                }
+            }
+
+            function agregarPalabraLibro(index) {
+                const titleInput = document.getElementById('titleInputLibro' + index);
+                
+                // Si el valor no tiene la palabra "Libro" al principio, agregarla
+                if (titleInput && !titleInput.value.toLowerCase().startsWith('libro ')) {
+                    titleInput.value = 'Libro ' + titleInput.value;
                 }
             }
 
@@ -537,7 +620,6 @@
             }
 
             function cargarRecursos(nombreSeccion, numSeccion) {
-
                 console.log('cargarRecursos llamado con:', { nombreSeccion, numSeccion });
                 fetch('listar_recursos.php')
                     .then(res => res.json())
