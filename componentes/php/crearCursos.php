@@ -307,23 +307,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 const tituloRecurso = tituloLibro !== '' ? tituloLibro : (titulo !== '' ? titulo : 'Sin título');
                 const esLibro = tituloRecurso.toLowerCase().includes('libro'); 
 
-                console.log(\"📚 Título del recurso:\", tituloRecurso);
-
-                console.log(\"📚 libro o no?\", esLibro);
-
-
-
-                console.log(\"📚 Datos principales del libro:\", {
-                    tituloRecurso,
-                    descripcion,
-                    archivo,
-                    url,
-                    seccionTitulo
-                });
-
                 const numeroPaginasElement = document.getElementById('numeroPaginas' + index);
                 const numPaginas = numeroPaginasElement ? parseInt(numeroPaginasElement.value) : 1;  // Valor por defecto 1 si no existe
-                console.log(`📖 Número de páginas: \${numPaginas}`);                
 
                 const paginas = [];
 
@@ -332,33 +317,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     const texto = document.getElementById('textoPagina' + index + '_' + i)?.value || '';
                     const imagen = document.getElementById('imagenPagina' + index + '_' + i)?.files?.[0] || null;
                     const urlPagina = document.getElementById('urlPagina' + index + '_' + i)?.value || '';
-                    const youtube = document.getElementById('youtubePagina' + index + '_' + i)?.value || '';
-
-                    console.log(`📄 Página \${i} - Datos:`, {
-                        texto,
-                        imagen: imagen ? imagen.name : 'Sin imagen',
-                        url: urlPagina,
-                        youtube
-                    });
 
                     // Crear objeto para cada página
                     const paginaInfo = {
                         texto,
                         imagen: imagen ? imagen.name : '',  // Solo enviar el nombre del archivo, no el archivo completo
                         url: urlPagina,
-                        youtube
                     };
 
                     paginas.push(paginaInfo);
                 }
 
-                // Verificar que las páginas han sido correctamente recolectadas
-                console.log(\"📚 Información de las páginas:\", paginas);
 
                 // Crear FormData para enviar todos los datos
                 const formData = new FormData();
-                // formData.append('titulo', titulo);
-                // formData.append('tituloLibro', tituloLibro)
+                
                 formData.append('tituloRecurso', tituloRecurso);
                 formData.append('descripcion', descripcion);
                 formData.append('url', url);
@@ -551,28 +524,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <label for=\"textoPagina\${index}_\${i}\">Texto</label>
                                 </div>
 
-                                <div class=\"mb-3\">
-                                    <label for=\"imagenPagina\${index}_\${i}\" class=\"form-label\">Imagen</label>
-                                    <input type=\"file\" class=\"form-control\" id=\"imagenPagina\${index}_\${i}\">
-                                </div>
-
                                 <div class=\"input-group mb-3\">
                                     <span class=\"input-group-text\">URL</span>
                                     <input type=\"url\" class=\"form-control\" id=\"urlPagina\${index}_\${i}\" placeholder=\"http://...\">
                                 </div>
 
-                                <div class=\"input-group\">
-                                    <span class=\"input-group-text\">YouTube</span>
-                                    <input type=\"url\" class=\"form-control\" id=\"youtubePagina\${index}_\${i}\" placeholder=\"https://youtu.be/...\">
+                                <div class=\"mb-3\">
+                                    <label for=\"imagenPagina\${index}_\${i}\" class=\"form-label\">Imagen</label>
+                                    <input type=\"file\" class=\"form-control\" id=\"imagenPagina\${index}_\${i}\">
                                 </div>
+
                             </div>
                         </div>
                     `;
                 }
             }
 
-           function cargarRecursos(nombreSeccion, numSeccion) {
-
+            function cargarRecursos(nombreSeccion, numSeccion) {
                 console.log('cargarRecursos llamado con:', { nombreSeccion, numSeccion });
                 fetch('listar_recursos.php')
                     .then(res => res.json())
@@ -869,31 +837,53 @@ $contenidoCSS = "
         }
 
         if (\$esLibro === \"true\"){
-            echo \"📚 Es un libro, guardando en carpeta de libro...\";
 
-            // \$rutaLibro = __DIR__ . '/recursos/libros/' . \$tituloRecurso;
-            \$rutaSeccion = __DIR__ . '/recursos/' . \$nombreSeccion;
-            \$rutaRecurso = \$rutaSeccion . '/' . \$tituloRecurso;
+            \$paginas = json_decode(\$_POST['paginas'], true);
 
-            // Crear las carpetas si no existen
-            if (!file_exists(\$rutaSeccion)) {
-                mkdir(\$rutaSeccion, 0777, true);
-            }
-            if (!file_exists(\$rutaRecurso)) {
-                mkdir(\$rutaRecurso, 0777, true);
+            if (!\$paginas) {
+                die(\"❌ Error al decodificar las páginas.\");
             }
 
-            for (\$i = 1; \$i <= \$numPaginas; \$i++) {
-                \$rutaHoja = \$rutaRecurso . '/hoja' . \$i;
-                if (!file_exists(\$rutaHoja)) {
-                    mkdir(\$rutaHoja, 0777, true);  // Crear la carpeta de cada hoja
+            \$exito = true;
+            // Procesar cada página
+            foreach (\$paginas as \$index => \$pagina) {
+                \$texto = \$pagina['texto'];
+                \$imagen = \$pagina['imagen'];  // El nombre de la imagen
+                \$urlPagina = \$pagina['url'];
+
+
+                // Guardar los datos de la página en el sistema de archivos o base de datos
+                \$rutaSeccion = __DIR__ . '/recursos/' . \$nombreSeccion;
+                \$rutaRecurso = \$rutaSeccion . '/' . \$tituloRecurso;
+
+                // Crear las carpetas si no existen
+                if (!file_exists(\$rutaSeccion)) {
+                    mkdir(\$rutaSeccion, 0777, true);
                 }
-    
-                // Guardar los datos de la hoja (por ejemplo, contenido o archivos)
-                \$infoHoja = \"Contenido de la hoja \$i\";  // Esto es solo un ejemplo, puedes agregar datos reales
-                file_put_contents(\$rutaHoja . \"/hoja\$i.txt\", \$infoHoja);  // Guardar un archivo de texto como ejemplo
-    
-                echo \"📄 Hoja \$i guardada en: \$rutaHoja\n\";
+                if (!file_exists(\$rutaRecurso)) {
+                    mkdir(\$rutaRecurso, 0777, true);
+                }
+
+                \$info = \"Título: \$tituloRecurso\nDescripción: \$descripcion\nURL: \$url\";
+
+                file_put_contents(\"\$rutaRecurso/info.txt\", \$info);
+
+                // Crear una carpeta para cada página
+                \$rutaPagina = \$rutaRecurso . '/hoja' . (\$index + 1); // Crear una carpeta por cada página
+                if (!file_exists(\$rutaPagina)) {
+                    mkdir(\$rutaPagina, 0777, true);  // Crear la carpeta de la página
+                }
+
+                // Guardar el contenido de la página
+                \$infoPagina = \"Texto: \$texto\nURL: \$urlPagina\";
+                file_put_contents(\$rutaPagina . \"/pagina\$index.txt\", \$infoPagina);  // Guardar el archivo de texto con la información de la página
+
+                // Si hay archivos subidos (imágenes, documentos), guardarlos
+                if (isset(\$_FILES[\"imagen\$index\"]) && \$_FILES[\"imagen\$index\"]['error'] === UPLOAD_ERR_OK) {
+                    // Ruta donde guardar el archivo
+                    \$archivoDestino = \$rutaPagina . \"/\" . basename(\$_FILES[\"imagen\$index\"]['name']);
+                    move_uploaded_file(\$_FILES[\"imagen\$index\"]['tmp_name'], \$archivoDestino);
+                }
             }
         } else{
             echo \"📚 No es un libro, guardando de forma normal...\n\";
@@ -909,12 +899,8 @@ $contenidoCSS = "
                 mkdir(\$rutaRecurso, 0777, true);
             }
             // Guardar archivo info.txt
-            \$info = \"Título: \$tituloRecurso
-            Descripción: \$descripcion\";
+            \$info = \"Título: \$tituloRecurso\nDescripción: \$descripcion\nURL: \$url\";
 
-            if (!empty(\$url)) {
-                \$info .= \"URL: \$url\";
-            }
             file_put_contents(\"\$rutaRecurso/info.txt\", \$info);
 
             // Guardar archivo subido

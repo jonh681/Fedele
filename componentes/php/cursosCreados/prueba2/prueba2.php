@@ -2,7 +2,7 @@
     <html lang="es">
     <head>
         <meta charset="UTF-8">
-        <title>IPHONE</title>
+        <title>prueba2</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" />
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
         <link rel="stylesheet" href="diseñoContenido.css">
@@ -13,7 +13,7 @@
                 <a href="/fedele/componentes/admin/HomePageAdmin.html"><img src="/fedele/imagenes/fedele.png" width="120" alt=""></a>
             </div>
             <div style=" width: 100%;">
-                <h1 class="text-center my-4">Bienvenido al curso: IPHONE</h1>
+                <h1 class="text-center my-4">Bienvenido al curso: prueba2</h1>
             </div>
         </div>
         <div class="container mt-3">
@@ -460,23 +460,8 @@
                 const tituloRecurso = tituloLibro !== '' ? tituloLibro : (titulo !== '' ? titulo : 'Sin título');
                 const esLibro = tituloRecurso.toLowerCase().includes('libro'); 
 
-                console.log("📚 Título del recurso:", tituloRecurso);
-
-                console.log("📚 libro o no?", esLibro);
-
-
-
-                console.log("📚 Datos principales del libro:", {
-                    tituloRecurso,
-                    descripcion,
-                    archivo,
-                    url,
-                    seccionTitulo
-                });
-
                 const numeroPaginasElement = document.getElementById('numeroPaginas' + index);
                 const numPaginas = numeroPaginasElement ? parseInt(numeroPaginasElement.value) : 1;  // Valor por defecto 1 si no existe
-                console.log(`📖 Número de páginas: ${numPaginas}`);                
 
                 const paginas = [];
 
@@ -485,33 +470,21 @@
                     const texto = document.getElementById('textoPagina' + index + '_' + i)?.value || '';
                     const imagen = document.getElementById('imagenPagina' + index + '_' + i)?.files?.[0] || null;
                     const urlPagina = document.getElementById('urlPagina' + index + '_' + i)?.value || '';
-                    const youtube = document.getElementById('youtubePagina' + index + '_' + i)?.value || '';
-
-                    console.log(`📄 Página ${i} - Datos:`, {
-                        texto,
-                        imagen: imagen ? imagen.name : 'Sin imagen',
-                        url: urlPagina,
-                        youtube
-                    });
 
                     // Crear objeto para cada página
                     const paginaInfo = {
                         texto,
                         imagen: imagen ? imagen.name : '',  // Solo enviar el nombre del archivo, no el archivo completo
                         url: urlPagina,
-                        youtube
                     };
 
                     paginas.push(paginaInfo);
                 }
 
-                // Verificar que las páginas han sido correctamente recolectadas
-                console.log("📚 Información de las páginas:", paginas);
 
                 // Crear FormData para enviar todos los datos
                 const formData = new FormData();
-                // formData.append('titulo', titulo);
-                // formData.append('tituloLibro', tituloLibro)
+                
                 formData.append('tituloRecurso', tituloRecurso);
                 formData.append('descripcion', descripcion);
                 formData.append('url', url);
@@ -704,28 +677,23 @@
                                     <label for="textoPagina${index}_${i}">Texto</label>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label for="imagenPagina${index}_${i}" class="form-label">Imagen</label>
-                                    <input type="file" class="form-control" id="imagenPagina${index}_${i}">
-                                </div>
-
                                 <div class="input-group mb-3">
                                     <span class="input-group-text">URL</span>
                                     <input type="url" class="form-control" id="urlPagina${index}_${i}" placeholder="http://...">
                                 </div>
 
-                                <div class="input-group">
-                                    <span class="input-group-text">YouTube</span>
-                                    <input type="url" class="form-control" id="youtubePagina${index}_${i}" placeholder="https://youtu.be/...">
+                                <div class="mb-3">
+                                    <label for="imagenPagina${index}_${i}" class="form-label">Imagen</label>
+                                    <input type="file" class="form-control" id="imagenPagina${index}_${i}">
                                 </div>
+
                             </div>
                         </div>
                     `;
                 }
             }
 
-           function cargarRecursos(nombreSeccion, numSeccion) {
-
+            function cargarRecursos(nombreSeccion, numSeccion) {
                 console.log('cargarRecursos llamado con:', { nombreSeccion, numSeccion });
                 fetch('listar_recursos.php')
                     .then(res => res.json())

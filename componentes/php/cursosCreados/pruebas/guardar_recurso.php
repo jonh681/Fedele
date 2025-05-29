@@ -23,9 +23,10 @@
         $url = trim($_POST['url'] ?? '');
         $seccion = trim($_POST['seccion'] ?? 'sin_seccion');
         $curso = trim($_POST['curso'] ?? '');
+        // $urlPagina = trim($_POST['urlPagina'] ?? 'sin url');
+        // $textoPagina = trim($_POST['textoPagina'] ?? 'sin contenido en esta pagina');
 
-        echo "📥 es libro?: $esLibro";
-        var_dump($esLibro);
+        // echo "📥 la URL es: $urlPagina";
 
 
         if (empty($tituloRecurso)) {
@@ -64,44 +65,59 @@
         if ($esLibro === "true"){
             echo "📚 Es un libro, guardando en carpeta de libro...";
 
-            // $rutaLibro = __DIR__ . '/recursos/libros/' . $tituloRecurso;
-            $rutaSeccion = __DIR__ . '/recursos/' . $nombreSeccion;
-            $rutaRecurso = $rutaSeccion . '/' . $tituloRecurso;
+            $paginas = json_decode($_POST['paginas'], true);
 
-            // Crear las carpetas si no existen
-            if (!file_exists($rutaSeccion)) {
-                mkdir($rutaSeccion, 0777, true);
-            }
-            if (!file_exists($rutaRecurso)) {
-                mkdir($rutaRecurso, 0777, true);
+            if (!$paginas) {
+                die("❌ Error al decodificar las páginas.");
             }
 
-            for ($i = 1; $i <= $numPaginas; $i++) {
-                $rutaHoja = $rutaRecurso . '/hoja' . $i;
-                if (!file_exists($rutaHoja)) {
-                    mkdir($rutaHoja, 0777, true);  // Crear la carpeta de cada hoja
+            $exito = true;
+            // Procesar cada página
+            foreach ($paginas as $index => $pagina) {
+                $texto = $pagina['texto'];
+                $imagen = $pagina['imagen'];  // El nombre de la imagen
+                $urlPagina = $pagina['url'];
+
+                echo "📄 Página $index - Texto: $texto, Imagen: $imagen, URL: $urlPagina\n";
+
+                // Guardar los datos de la página en el sistema de archivos o base de datos
+                $rutaSeccion = __DIR__ . '/recursos/' . $nombreSeccion;
+                $rutaRecurso = $rutaSeccion . '/' . $tituloRecurso;
+
+                // Crear las carpetas si no existen
+                if (!file_exists($rutaSeccion)) {
+                    mkdir($rutaSeccion, 0777, true);
+                    echo "📂 Sección creada: $rutaSeccion\n";
                 }
-    
-                 // Guardar el contenido de la hoja
-                $infoHoja = "Contenido de la hoja $i";  // Esto es solo un ejemplo, puedes agregar datos reales
-                if (!empty($url)) {
-                    $infoHoja .= "\nURL: $url";  // Guardar el URL en el texto de la hoja
+                if (!file_exists($rutaRecurso)) {
+                    mkdir($rutaRecurso, 0777, true);
+                    echo "📂 Recurso creado: $rutaRecurso\n";
                 }
 
-                // Guardar el archivo de texto con la información de la hoja
-                file_put_contents($rutaHoja . "/hoja$i.txt", $infoHoja);
+                $info = "Título: $tituloRecurso\nDescripción: $descripcion\nURL: $url";
+
+                file_put_contents("$rutaRecurso/info.txt", $info);
+                // Crear una carpeta para cada página
+                $rutaPagina = $rutaRecurso . '/hoja' . ($index + 1); // Crear una carpeta por cada página
+                if (!file_exists($rutaPagina)) {
+                    mkdir($rutaPagina, 0777, true);  // Crear la carpeta de la página
+                    echo "📂 Carpeta de la página $index creada en: $rutaPagina\n";
+                }
+
+                // Guardar el contenido de la página
+                $infoPagina = "Texto: $texto\nURL: $urlPagina";
+                echo "📂 info pagina: $infoPagina\n";
+                file_put_contents($rutaPagina . "/pagina$index.txt", $infoPagina);  // Guardar el archivo de texto con la información de la página
 
                 // Si hay archivos subidos (imágenes, documentos), guardarlos
-                if (isset($_FILES["imagen$i"]) && $_FILES["imagen$i"]['error'] === UPLOAD_ERR_OK) {
+                if (isset($_FILES["imagen$index"]) && $_FILES["imagen$index"]['error'] === UPLOAD_ERR_OK) {
                     // Ruta donde guardar el archivo
-                    $archivoDestino = $rutaHoja . "/" . basename($_FILES["imagen$i"]['name']);
-                    move_uploaded_file($_FILES["imagen$i"]['tmp_name'], $archivoDestino);
+                    $archivoDestino = $rutaPagina . "/" . basename($_FILES["imagen$index"]['name']);
+                    move_uploaded_file($_FILES["imagen$index"]['tmp_name'], $archivoDestino);
                     echo "📎 Imagen o archivo guardado en: $archivoDestino\n";
                 }
-
-                echo "📄 Hoja $i guardada en: $rutaHoja\n";
-                
             }
+            
         } else{
             echo "📚 No es un libro, guardando de forma normal...\n";
 
@@ -115,13 +131,10 @@
             if (!file_exists($rutaRecurso)) {
                 mkdir($rutaRecurso, 0777, true);
             }
+            $exito = true;
             // Guardar archivo info.txt
-            $info = "Título: $tituloRecurso
-            Descripción: $descripcion";
+            $info = "Título: $tituloRecurso\nDescripción: $descripcion\nURL: $url";
 
-            if (!empty($url)) {
-                $info .= "URL: $url";
-            }
             file_put_contents("$rutaRecurso/info.txt", $info);
 
             // Guardar archivo subido
@@ -136,35 +149,4 @@
     }  else {
         echo "⚠️ Esta ruta solo acepta POST.";
     } 
-//         $rutaSeccion = __DIR__ . '/recursos/' . $nombreSeccion;
-//         $rutaRecurso = $rutaSeccion . '/' . $tituloRecurso;
-
-//         // Crear las carpetas si no existen
-//         if (!file_exists($rutaSeccion)) {
-//             mkdir($rutaSeccion, 0777, true);
-//         }
-//         if (!file_exists($rutaRecurso)) {
-//             mkdir($rutaRecurso, 0777, true);
-//         }
-//         // Guardar archivo info.txt
-//         $info = "Título: $tituloRecurso
-//         Descripción: $descripcion
-//         ";
-//         if (!empty($url)) {
-//             $info .= "URL: $url";
-//         }
-//         file_put_contents("$rutaRecurso/info.txt", $info);
-
-//         // Guardar archivo subido
-//         if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] === UPLOAD_ERR_OK) {
-//             $archivoDestino = "$rutaRecurso/" . basename($_FILES['archivo']['name']);
-//             move_uploaded_file($_FILES['archivo']['tmp_name'], $archivoDestino);
-//         }
-
-//         echo "✅ Recurso guardado exitosamente en: $rutaRecurso";
-
-//     } else {
-//         echo "⚠️ Esta ruta solo acepta POST.
-// ";
-//     }
     ?>

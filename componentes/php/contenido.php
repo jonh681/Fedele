@@ -10,8 +10,6 @@ $curso = $_GET['curso'] ?? '';
 $seccion = $_GET['seccion'] ?? '';
 $subcarpeta = $_GET['subcarpeta'] ?? '';
 
-
-
 if (!$nombre || !$usuarioId || !$curso || !$subcarpeta) {
     echo "<div class='text-danger'>Faltan datos necesarios para mostrar la lección.</div>";
     exit;
@@ -66,9 +64,10 @@ if ($row = $result->fetch_assoc()) {
     $leccionSiguiente = $row['nombre_leccion'];
 }
 $stmt->close();
+
 // === Leer info.txt ===
-$rutaRecurso = __DIR__ . "/cursosCreados/" . preg_replace('/[^a-zA-Z0-9_-]/', '_', $curso) . "/recursos/" .
-                preg_replace('/[^a-zA-Z0-9_-]/', ' ', $seccion) . "/" .
+$rutaRecurso = __DIR__ . "/cursosCreados/" . preg_replace('/[^a-zA-Z0-9_-]/', '_', $curso) . "/recursos/" . 
+                preg_replace('/[^a-zA-Z0-9_-]/', ' ', $seccion) . "/" . 
                 preg_replace('/[^a-zA-Z0-9_-]/', ' ', $subcarpeta);
 
 $titulo = 'Sin título';
@@ -97,38 +96,52 @@ $archivos = array_filter(scandir($rutaRecurso), function($f) use ($rutaRecurso) 
 // === Estados ===
 $esActualConcluida = ($idActual <= $idUltima);
 $esSiguiente = ($idActual === $idUltima + 1 || ($idUltima === -1 && $idActual === 1));
+
+// Determina si la lección está bloqueada
+// Comprobar si la lección anterior está completada
+$esAnteriorCompletada = ($idAnterior <= $idUltima);
+$esPrimeraLeccion = ($idActual == 1);
+
+// Determinar si el contenido se debe mostrar
+if ($esPrimeraLeccion || $esActualConcluida || $esAnteriorCompletada) {
+    // Si la lección actual está completada o la anterior está completada, mostramos el contenido
+    $contenidoClase = '';
+} else {
+    // Si la lección actual y la anterior están incompletas, bloqueamos el contenido
+    $contenidoClase = 'contenido-bloqueado';
+}
 ?>
 
-<div class="container p-4 bg-white" style="color:#234db8;">
+<div class="container p-4 bg-white " style="color:#234db8;">
     <h4 class="mb-3" style="text-align: justify;"><?= htmlspecialchars($titulo) ?></h4>
 
-    <div class="d-flex justify-content-between align-items-center mb-3 p-2 border rounded shadow-sm bg-light">
+    <div class="d-flex justify-content-between align-items-center mb-3 p-2 border rounded shadow-sm bg-light ">
         <div>
             <a href="#"><?= htmlspecialchars($curso) ?></a> › <span><?= htmlspecialchars($seccion) ?> > <?= htmlspecialchars($titulo) ?></span>
         </div>
-        <span id="estado-leccion" class="badge <?= $esActualConcluida ? 'bg-success' : 'bg-warning' ?>">
+        <span id="estado-leccion" class="badge <?= $esActualConcluida ? 'bg-success' : 'bg-warning' ?> <?= $contenidoClase ?> ">
             <?= $esActualConcluida ? 'Completado' : 'En proceso' ?>
         </span>
     </div>
 
-    <p class="mb-4" style="text-align: justify;"><?= nl2br(htmlspecialchars($descripcion)) ?></p>
+    <p class="mb-4 <?= $contenidoClase ?>" style="text-align: justify;"><?= nl2br(htmlspecialchars($descripcion)) ?></p>
 
     <?php if ($url && preg_match('/(youtube\.com\/watch\?v=|youtu\.be\/)([^\s&]+)/', $url, $matches)): ?>
         <?php $videoId = end($matches); ?>
-        <div class="mb-4">
+        <div class="mb-4 <?= $contenidoClase ?>">
             <iframe width="720" height="405" src="https://www.youtube.com/embed/<?= $videoId ?>" allowfullscreen></iframe>
         </div>
     <?php elseif ($url): ?>
-        <p><strong>URL:</strong> <a href="<?= htmlspecialchars($url) ?>" target="_blank"><?= htmlspecialchars($url) ?></a></p>
+        <p class="<?= $contenidoClase ?>"><strong>URL:</strong> <a href="<?= htmlspecialchars($url) ?>" target="_blank"><?= htmlspecialchars($url) ?></a></p>
     <?php endif; ?>
 
     <?php if (count($archivos) > 0): ?>
-        <div class="mb-4">
+        <div class="mb-4 <?= $contenidoClase ?>">
             <?php foreach ($archivos as $archivo): ?>
                 <?php
                 $ext = strtolower(pathinfo($archivo, PATHINFO_EXTENSION));
-                $rutaArchivo = "cursosCreados/" . preg_replace('/[^a-zA-Z0-9_-]/', '_', $curso) . "/recursos/" .
-                               preg_replace('/[^a-zA-Z0-9_-]/', ' ', $seccion) . "/" .
+                $rutaArchivo = "cursosCreados/" . preg_replace('/[^a-zA-Z0-9_-]/', '_', $curso) . "/recursos/" . 
+                               preg_replace('/[^a-zA-Z0-9_-]/', ' ', $seccion) . "/" . 
                                preg_replace('/[^a-zA-Z0-9_-]/', ' ', $subcarpeta) . "/$archivo";
                 ?>
                 <?php if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])): ?>
@@ -171,7 +184,7 @@ $esSiguiente = ($idActual === $idUltima + 1 || ($idUltima === -1 && $idActual ==
         <?php endif; ?>
 
         <?php if ($leccionSiguiente && $seccionSiguiente): ?>
-            <button class="btn btn-outline-primary navegar-btn"
+            <button class="btn btn-outline-primary navegar-btn <?= $contenidoClase ?>"
                     data-curso="<?= htmlspecialchars($curso) ?>"
                     data-seccion="<?= htmlspecialchars($seccionSiguiente) ?>"
                     data-subcarpeta="<?= htmlspecialchars($leccionSiguiente) ?>">
@@ -180,6 +193,7 @@ $esSiguiente = ($idActual === $idUltima + 1 || ($idUltima === -1 && $idActual ==
         <?php endif; ?>
     </div>
 </div>
+
 <script>
 document.querySelector('.concluir-btn')?.addEventListener('click', function () {
     const curso = this.dataset.curso;
@@ -211,6 +225,7 @@ document.querySelector('.concluir-btn')?.addEventListener('click', function () {
     });
 });
 </script>
+
 <script>
 document.querySelectorAll('.navegar-btn').forEach(btn => {
     btn.addEventListener('click', function () {

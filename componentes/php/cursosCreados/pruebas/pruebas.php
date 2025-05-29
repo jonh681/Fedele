@@ -379,13 +379,12 @@
                     const texto = document.getElementById('textoPagina' + index + '_' + i)?.value || '';
                     const imagen = document.getElementById('imagenPagina' + index + '_' + i)?.files?.[0] || null;
                     const urlPagina = document.getElementById('urlPagina' + index + '_' + i)?.value || '';
-                    const youtube = document.getElementById('youtubePagina' + index + '_' + i)?.value || '';
+
 
                     console.log(`📄 Página ${i} - Datos:`, {
                         texto,
                         imagen: imagen ? imagen.name : 'Sin imagen',
                         url: urlPagina,
-                        youtube
                     });
 
                     // Crear objeto para cada página
@@ -393,7 +392,6 @@
                         texto,
                         imagen: imagen ? imagen.name : '',  // Solo enviar el nombre del archivo, no el archivo completo
                         url: urlPagina,
-                        youtube
                     };
 
                     paginas.push(paginaInfo);
@@ -413,6 +411,10 @@
                 formData.append('paginas', JSON.stringify(paginas));  // Convertir las páginas a una cadena JSON para enviarlas
                 formData.append('esLibro', esLibro);  // Añadir esta información para saber si es un libro
                 formData.append('numPaginas', numPaginas);  // Enviar el número de páginas
+                // formData.append('urlPagina', urlPagina );  // Enviar el número de páginas
+                // formData.append('textoPagina', texto );  // Enviar el número de páginas
+
+
 
                 console.log("➡ pathname completo:", window.location.pathname);
 
@@ -598,20 +600,13 @@
                                     <textarea class="form-control" id="textoPagina${index}_${i}" style="height: 100px"></textarea>
                                     <label for="textoPagina${index}_${i}">Texto</label>
                                 </div>
-
-                                <div class="mb-3">
-                                    <label for="imagenPagina${index}_${i}" class="form-label">Imagen</label>
-                                    <input type="file" class="form-control" id="imagenPagina${index}_${i}">
-                                </div>
-
                                 <div class="input-group mb-3">
                                     <span class="input-group-text">URL</span>
                                     <input type="url" class="form-control" id="urlPagina${index}_${i}" placeholder="http://...">
                                 </div>
-
-                                <div class="input-group">
-                                    <span class="input-group-text">YouTube</span>
-                                    <input type="url" class="form-control" id="youtubePagina${index}_${i}" placeholder="https://youtu.be/...">
+                                <div class="mb-3">
+                                    <label for="imagenPagina${index}_${i}" class="form-label">Imagen</label>
+                                    <input type="file" class="form-control" id="imagenPagina${index}_${i}">
                                 </div>
                             </div>
                         </div>
@@ -632,7 +627,6 @@
                         );
 
                         recursosFiltrados.sort((a, b) => a.fecha - b.fecha);
-
 
                         const lista = document.getElementById('listaRecursos' + numSeccion);
                         if (!lista) return;

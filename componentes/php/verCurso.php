@@ -129,6 +129,10 @@ $progresoPorcentaje = ($totalLecciones > 0) ? round(($leccionesCompletadas / $to
         color: white !important;
         font-weight: bold;
         }
+
+        .contenido-bloqueado {
+            display: none !important;        
+        }
     </style>
 </head>
 <body>

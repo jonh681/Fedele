@@ -62,32 +62,50 @@
         }
 
         if ($esLibro === "true"){
-            echo "📚 Es un libro, guardando en carpeta de libro...";
 
-            // $rutaLibro = __DIR__ . '/recursos/libros/' . $tituloRecurso;
-            $rutaSeccion = __DIR__ . '/recursos/' . $nombreSeccion;
-            $rutaRecurso = $rutaSeccion . '/' . $tituloRecurso;
+            $paginas = json_decode($_POST['paginas'], true);
 
-            // Crear las carpetas si no existen
-            if (!file_exists($rutaSeccion)) {
-                mkdir($rutaSeccion, 0777, true);
-            }
-            if (!file_exists($rutaRecurso)) {
-                mkdir($rutaRecurso, 0777, true);
+            if (!$paginas) {
+                die("❌ Error al decodificar las páginas.");
             }
 
-            for ($i = 1; $i <= $numPaginas; $i++) {
-                $rutaHoja = $rutaRecurso . '/hoja' . $i;
-                if (!file_exists($rutaHoja)) {
-                    mkdir($rutaHoja, 0777, true);  // Crear la carpeta de cada hoja
+            $exito = true;
+            // Procesar cada página
+            foreach ($paginas as $index => $pagina) {
+                $texto = $pagina['texto'];
+                $imagen = $pagina['imagen'];  // El nombre de la imagen
+                $urlPagina = $pagina['url'];
+
+
+                // Guardar los datos de la página en el sistema de archivos o base de datos
+                $rutaSeccion = __DIR__ . '/recursos/' . $nombreSeccion;
+                $rutaRecurso = $rutaSeccion . '/' . $tituloRecurso;
+
+                // Crear las carpetas si no existen
+                if (!file_exists($rutaSeccion)) {
+                    mkdir($rutaSeccion, 0777, true);
                 }
-    
-                // Guardar los datos de la hoja (por ejemplo, contenido o archivos)
-                $infoHoja = "Contenido de la hoja $i";  // Esto es solo un ejemplo, puedes agregar datos reales
-                file_put_contents($rutaHoja . "/hoja$i.txt", $infoHoja);  // Guardar un archivo de texto como ejemplo
-    
-                echo "📄 Hoja $i guardada en: $rutaHoja
-";
+                if (!file_exists($rutaRecurso)) {
+                    mkdir($rutaRecurso, 0777, true);
+                }
+
+                // Crear una carpeta para cada página
+                $rutaPagina = $rutaRecurso . '/hoja' . ($index + 1); // Crear una carpeta por cada página
+                if (!file_exists($rutaPagina)) {
+                    mkdir($rutaPagina, 0777, true);  // Crear la carpeta de la página
+                }
+
+                // Guardar el contenido de la página
+                $infoPagina = "Texto: $texto
+URL: $urlPagina";
+                file_put_contents($rutaPagina . "/pagina$index.txt", $infoPagina);  // Guardar el archivo de texto con la información de la página
+
+                // Si hay archivos subidos (imágenes, documentos), guardarlos
+                if (isset($_FILES["imagen$index"]) && $_FILES["imagen$index"]['error'] === UPLOAD_ERR_OK) {
+                    // Ruta donde guardar el archivo
+                    $archivoDestino = $rutaPagina . "/" . basename($_FILES["imagen$index"]['name']);
+                    move_uploaded_file($_FILES["imagen$index"]['tmp_name'], $archivoDestino);
+                }
             }
         } else{
             echo "📚 No es un libro, guardando de forma normal...
@@ -105,11 +123,9 @@
             }
             // Guardar archivo info.txt
             $info = "Título: $tituloRecurso
-            Descripción: $descripcion";
+Descripción: $descripcion
+URL: $url";
 
-            if (!empty($url)) {
-                $info .= "URL: $url";
-            }
             file_put_contents("$rutaRecurso/info.txt", $info);
 
             // Guardar archivo subido
