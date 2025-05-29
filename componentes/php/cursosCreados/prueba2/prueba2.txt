@@ -1,5 +1,0 @@
-Nombre corto: prueba2
-Fecha de inicio: 2025-05-27T13:02
-Fecha de fin: 2025-06-04T13:02
-Descripción: poiuytr
-Secciones: 3

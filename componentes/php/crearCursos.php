@@ -859,9 +859,11 @@ $contenidoCSS = "
                 // Crear las carpetas si no existen
                 if (!file_exists(\$rutaSeccion)) {
                     mkdir(\$rutaSeccion, 0777, true);
+                    chmod(\$rutaRecurso, 0755);
                 }
                 if (!file_exists(\$rutaRecurso)) {
                     mkdir(\$rutaRecurso, 0777, true);
+                    chmod(\$rutaRecurso, 0755);
                 }
 
                 \$info = \"Título: \$tituloRecurso\nDescripción: \$descripcion\nURL: \$url\";
@@ -872,6 +874,8 @@ $contenidoCSS = "
                 \$rutaPagina = \$rutaRecurso . '/hoja' . (\$index + 1); // Crear una carpeta por cada página
                 if (!file_exists(\$rutaPagina)) {
                     mkdir(\$rutaPagina, 0777, true);  // Crear la carpeta de la página
+                    chmod(\$rutaRecurso, 0755);
+
                 }
 
                 // Guardar el contenido de la página
@@ -894,9 +898,11 @@ $contenidoCSS = "
             // Crear las carpetas si no existen
             if (!file_exists(\$rutaSeccion)) {
                 mkdir(\$rutaSeccion, 0777, true);
+                chmod(\$rutaRecurso, 0755);
             }
             if (!file_exists(\$rutaRecurso)) {
                 mkdir(\$rutaRecurso, 0777, true);
+                chmod(\$rutaRecurso, 0755);
             }
             // Guardar archivo info.txt
             \$info = \"Título: \$tituloRecurso\nDescripción: \$descripcion\nURL: \$url\";

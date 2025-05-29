@@ -228,6 +228,15 @@ $nombre = $_SESSION['nombre'];
                                                     estadoHTML = `<button class="btn btn-secondary" disabled>El curso ya terminó ⌛</button>`;
                                                 }
 
+                                                const progreso = inscripcion.porcentaje || 0; // Porcentaje de avance, ejemplo: 75
+                                                 // Clase dinámica para el color
+                                                let colorClase = 'bg-danger';
+                                                if (progreso >= 75) {
+                                                    colorClase = 'bg-success';
+                                                } else if (progreso >= 40) {
+                                                    colorClase = 'bg-warning text-dark'; // texto oscuro para mejor contraste
+                                                }
+
                                                 const div = document.createElement('div');
                                                 div.className = 'cursos p-3 border rounded mb-3';
                                                 div.innerHTML = `
@@ -240,8 +249,21 @@ $nombre = $_SESSION['nombre'];
                                                                 <div class="card-body text-center w-100">
                                                                     <h5 class="card-title mb-2">${curso.titulo}</h5>
                                                                     <p class="card-text mb-2">${curso.descripcion}</p>
-                                                                    <span class="badge bg-success mb-2">Inscrito</span></br>
-                                                                    ${estadoHTML}   
+                                                                    <span class="badge bg-success mb-2">Inscrito</span><br>
+
+                                                                    <!-- Barra de progreso -->
+                                                                    <div class="progress mb-2" style="height: 18px;">
+                                                                        <div class="progress-bar ${colorClase} bg-info progress-bar-striped progress-bar-animated" 
+                                                                            role="progressbar" 
+                                                                            style="width: ${progreso}%;" 
+                                                                            aria-valuenow="${progreso}" 
+                                                                            aria-valuemin="0" 
+                                                                            aria-valuemax="100">
+                                                                            PROGRESO: ${progreso}%
+                                                                        </div>
+                                                                    </div>
+
+                                                                    ${estadoHTML}
                                                                 </div>
                                                             </div>
                                                         </div>

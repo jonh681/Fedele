@@ -1,5 +1,0 @@
-Nombre corto: curso 1
-Fecha de inicio: 2025-05-25T13:07
-Fecha de fin: 2025-06-02T13:07
-Descripción: pruebas
-Secciones: 2

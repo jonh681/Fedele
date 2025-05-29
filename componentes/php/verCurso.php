@@ -222,7 +222,59 @@ $progresoPorcentaje = ($totalLecciones > 0) ? round(($leccionesCompletadas / $to
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
+        function inicializarCarrusel() {
+            const el = document.getElementById('libroCarousel');
+            if (el) {
+                bootstrap.Carousel.getOrCreateInstance(el, {
+                    interval: false,
+                    ride: false,
+                    pause: true,
+                    wrap: false // importante: no se reinicia automáticamente
+                });
+                configurarAvisoFinalCarrusel();
+            }
+        }
+
+        function configurarAvisoFinalCarrusel() {
+            const carrusel = document.getElementById('libroCarousel');
+            if (!carrusel) return;
+
+            const instance = bootstrap.Carousel.getInstance(carrusel);
+            const totalSlides = carrusel.querySelectorAll('.carousel-item').length;
+            let currentIndex = 0;
+
+            // Actualiza el índice cuando se hace slide
+            carrusel.addEventListener('slide.bs.carousel', function (event) {
+                currentIndex = event.to;
+            });
+
+            // Botones externos
+            const btnPrev = document.getElementById('btn-prev-slide');
+            const btnNext = document.getElementById('btn-next-slide');
+
+            if (btnPrev) {
+                btnPrev.addEventListener('click', function () {
+                    if (currentIndex === 0) {
+                        alert('🚫 Ya estás en la primera página del libro.');
+                    } else {
+                        instance.prev();
+                    }
+                });
+            }
+
+            if (btnNext) {
+                btnNext.addEventListener('click', function () {
+                    if (currentIndex === totalSlides - 1) {
+                        alert('📖 Fin del contenido del libro.');
+                    } else {
+                        instance.next();
+                    }
+                });
+            }
+        }
+        
         function cargarSubcarpeta(link) {
             document.querySelectorAll('.cargar-subcarpeta').forEach(el => el.classList.remove('active-leccion'));
 
@@ -242,6 +294,7 @@ $progresoPorcentaje = ($totalLecciones > 0) ? round(($leccionesCompletadas / $to
                 .then(html => {
                     const contenedor = document.getElementById('contenido-dinamico');
                     contenedor.innerHTML = html;
+                    inicializarCarrusel();
 
                     // Evento para botón de concluir
                     const btnConcluir = contenedor.querySelector('.concluir-btn');
@@ -373,5 +426,6 @@ $progresoPorcentaje = ($totalLecciones > 0) ? round(($leccionesCompletadas / $to
 
         document.addEventListener('DOMContentLoaded', asignarEventos);
     </script>
+    
 </body>
 </html>
