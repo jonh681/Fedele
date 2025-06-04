@@ -1,0 +1,5 @@
+Nombre corto: prueba2
+Fecha de inicio: 2025-06-02T09:27
+Fecha de fin: 2025-06-03T09:28
+Descripción: a
+Secciones: 2

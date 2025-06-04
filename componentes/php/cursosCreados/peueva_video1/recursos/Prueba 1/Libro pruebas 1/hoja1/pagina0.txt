@@ -1,0 +1,7 @@
+Texto:Un resumen de tu flujo.
+
+Cada oportunidad aparece como una tarjeta en una lista con toda la información importante y cada etapa te muestra un resumen general de tus ingresos esperados.
+
+Organización eficiente
+La vista de Kanban organiza oportunidades por etapa. Arrástralas y suéltalas en el flujo para moverlas de etapa a etapa.
+URL: https://www.youtube.com/watch?v=mqnGXEAVET8&ab_channel=KangarooCRM

@@ -97,23 +97,21 @@ $esLibro = stripos($subcarpeta, 'Libro') !== false;
             return is_file("$rutaRecurso/$f") && $f !== 'info.txt';
         });
 
-        // === Estados ===
         $esActualConcluida = ($idActual <= $idUltima);
         $esSiguiente = ($idActual === $idUltima + 1 || ($idUltima === -1 && $idActual === 1));
         $esAnteriorCompletada = ($idAnterior <= $idUltima);
         $esPrimeraLeccion = ($idActual == 1);
-        // Determinar si el contenido se debe mostrar
-        if ($esPrimeraLeccion || $esActualConcluida || $esAnteriorCompletada) {
-            // Si la lección actual está completada o la anterior está completada, mostramos el contenido
-            $contenidoClase = '';
-        } else {
-            // Si la lección actual y la anterior están incompletas, bloqueamos el contenido
-            $contenidoClase = 'contenido-bloqueado';
-        }     
+        $contenidoClase = ($esPrimeraLeccion || $esActualConcluida || $esAnteriorCompletada) ? '' : 'contenido-bloqueado';
+
+        $hojas = array_filter(scandir($rutaRecurso), function ($f) use ($rutaRecurso) {
+            return is_dir("$rutaRecurso/$f") && strpos($f, 'hoja') !== false;
+        });
     ?>
 
     <div class="container p-4 bg-white" style="color:#234db8;">
-        <h4 class="mb-3" style="text-align: justify;"><?= htmlspecialchars($titulo) ?></h4>
+        <h4 class="mb-3" style="text-align: justify;">
+            <?= htmlspecialchars($titulo) ?>
+        </h4>
 
         <div class="d-flex justify-content-between align-items-center mb-3 p-2 border rounded shadow-sm bg-light">
             <div>
@@ -124,10 +122,30 @@ $esLibro = stripos($subcarpeta, 'Libro') !== false;
             </span>
         </div>
 
-        <p class="mb-4 <?= $contenidoClase ?>" style="text-align: justify;"><?= nl2br(htmlspecialchars($descripcion)) ?></p>
+        <p class="mb-4 <?= $contenidoClase ?>" style="text-align: justify;">
+            <?= nl2br(htmlspecialchars($descripcion)) ?>
+        </p>
 
-        <!-- CARRUSEL INICIO -->
-        <div id="libroCarousel" class="carousel slide mb-4 <?= $contenidoClase ?>" data-bs-ride="false">
+        <!-- Carrusel Bootstrap -->
+        <div id="libroCarousel" class="carousel slide mb-4 <?= $contenidoClase ?>" data-bs-ride="false" >
+            <!-- Indicadores -->
+            <div class="carousel-indicators">
+                <?php
+                $slideIndex = 0;
+                foreach ($hojas as $hoja) {
+                    $rutaHoja = "$rutaRecurso/$hoja";
+                    $paginas = array_filter(scandir($rutaHoja), function ($f) use ($rutaHoja) {
+                        return is_file("$rutaHoja/$f") && strpos($f, 'pagina') === 0;
+                    });
+                    foreach ($paginas as $pagina) {
+                        $activeClass = ($slideIndex === 0) ? 'class="active" aria-current="true"' : '';
+                        echo '<button type="button" data-bs-target="#libroCarousel" data-bs-slide-to="' . $slideIndex . '" ' . $activeClass . ' aria-label="Slide ' . ($slideIndex + 1) . '"></button>';
+                        $slideIndex++;
+                    }
+                }
+                ?>
+            </div>
+            <!-- Contenido del carrusel -->
             <div class="carousel-inner">
                 <?php $indice = 0; ?>
                 <?php foreach ($hojas as $hoja): ?>
@@ -144,15 +162,26 @@ $esLibro = stripos($subcarpeta, 'Libro') !== false;
 
                         if (file_exists($rutaPagina)) {
                             $contenido = file($rutaPagina, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+                            $capturandoTexto = false;
+                            $texto = '';
                             foreach ($contenido as $linea) {
+                                $linea = trim($linea);
+                    
                                 if (stripos($linea, 'Texto:') === 0) {
-                                    $texto = trim(explode(':', $linea, 2)[1]);
+                                    $texto = trim(substr($linea, strlen('Texto:')));
+                                    $capturandoTexto = true;
                                 } elseif (stripos($linea, 'URL:') === 0) {
                                     $urlPagina = trim(explode(':', $linea, 2)[1]);
+                                    $capturandoTexto = false; // si hay URL ya terminó el texto
+                                } elseif ($capturandoTexto) {
+                                    $texto .= "\n" . $linea;
                                 }
                             }
+                            // Por si no encontró nada
+                            if (empty($texto)) {
+                                $texto = 'Sin texto disponible';
+                            }
                         }
-
                         $rutaHojaAbsoluta = realpath($rutaHoja);
                         $documentRoot = realpath($_SERVER['DOCUMENT_ROOT']);
                         $rutaRelativa = str_replace('\\', '/', str_replace($documentRoot, '', $rutaHojaAbsoluta));
@@ -161,9 +190,11 @@ $esLibro = stripos($subcarpeta, 'Libro') !== false;
                             return is_file("$rutaHoja/$f") && in_array(strtolower(pathinfo($f, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp']);
                         });
                     ?>
-                    <div class="carousel-item <?= $indice === 0 ? 'active' : '' ?>">
-                        <div class="p-4 text-center" style="background-color: rgba(248,249,250,1); height: 700px; border-radius: 10px;">
-                            <h2 class="mb-3" style="text-align: justify;"><?= nl2br(htmlspecialchars($texto)) ?></h2>
+                    <div class="carousel-item <?= $indice === 0 ? 'active' : '' ?> <?= $contenidoClase ?>">
+                        <div class="p-4 text-center overflow-auto" style="background-color: gainsboro; height: 550px; border-radius: 10px;">
+                            <h5 class="mb-3" style="text-align: justify;">
+                                <?= nl2br(htmlspecialchars($texto)) ?>
+                            </h5>
 
                             <?php if ($urlPagina && preg_match('/(youtube\.com\/watch\?v=|youtu\.be\/)([^\s&]+)/', $urlPagina, $matches)): ?>
                                 <?php $videoId = end($matches); ?>
@@ -186,14 +217,30 @@ $esLibro = stripos($subcarpeta, 'Libro') !== false;
             </div>
         </div>
 
-        <!-- CONTROLES FUERA DEL CARRUSEL -->
-        <div class="text-center mt-4 <?= $contenidoClase ?>">
-            <button id="btn-prev-slide" class="btn btn-outline-primary me-2">⬅ Página anterior</button>
-            <button id="btn-next-slide" class="btn btn-outline-primary">Página siguiente ➡</button>
+        <!-- Botones fuera del carrusel -->
+        <div class="text-center mb-5 <?= $contenidoClase ?>">
+            <button class="btn btn-outline-primary me-2" onclick="bootstrap.Carousel.getInstance(document.getElementById('libroCarousel')).prev()">
+                ⬅ Página anterior
+            </button>
+            <button class="btn btn-outline-primary" onclick="bootstrap.Carousel.getInstance(document.getElementById('libroCarousel')).next()">
+                Página siguiente ➡
+            </button>
         </div>
 
+        <!-- Script para inicializar el carrusel -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const el = document.getElementById('libroCarousel');
+                bootstrap.Carousel.getOrCreateInstance(el, {
+                    interval: false,
+                    ride: false,
+                    pause: true,
+                    wrap: true
+                });
+            });
+        </script>
 
-        <!-- BOTONES DE LECCIÓN -->
+        <!-- Botones de lección -->
         <div class="text-center mt-4">
             <?php if ($esSiguiente): ?>
                 <button class="btn btn-dark concluir-btn"
@@ -230,7 +277,6 @@ $esLibro = stripos($subcarpeta, 'Libro') !== false;
             <?php endif; ?>
         </div>
     </div>
-
 <?php else: ?>
     <?php 
         var_dump("Tu leccion no es un libro");

@@ -94,11 +94,17 @@ $progresoPorcentaje = ($totalLecciones > 0) ? round(($leccionesCompletadas / $to
         .layout {
             display: flex;
             position: absolute;
-            top: 140px;
+            top: 80px; /* por defecto */
             bottom: 0;
             left: 0;
             right: 0;
             overflow: hidden;
+        }
+
+        @media (min-width: 992px) {
+            .layout {
+                top: 100px; /* acorde al header en escritorio */
+            }
         }
 
         .menu {
@@ -133,34 +139,61 @@ $progresoPorcentaje = ($totalLecciones > 0) ? round(($leccionesCompletadas / $to
         .contenido-bloqueado {
             display: none !important;        
         }
+
+        .estilo-encabezado {
+            height: 80px; /* Altura por defecto (móviles) */
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+
+        .estilo-encabezado .row {
+            flex: 1;
+            align-items: center;
+        }
+
+        /* Altura mayor para pantallas grandes (≥ 992px) */
+        @media (min-width: 992px) {
+            .estilo-encabezado {
+                height: 100px;
+            }
+        }
+
+        .slide-scroll {
+            background-color: gainsboro;
+            height: 700px;
+            overflow-y: auto;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
     </style>
 </head>
 <body>
-    <div class="container-fluid bg-light py-3 shadow-sm rounded mb-4">
-        <div class="row align-items-center text-center text-lg-start">
-            <div class="col-12 col-lg-4 d-flex justify-content-center justify-content-lg-start">
+    <div class="container-fluid bg-red py-3 shadow-sm rounded mb-4 estilo-encabezado">
+        <div class="row w-100 text-center text-lg-start">
+            <div class="col-12 col-lg-4 d-flex justify-content-center justify-content-lg-start align-items-center">
                 <a href="/fedele/componentes/user/homePageUser.php">
-                    <img src="/fedele/imagenes/fedele.png" alt="Logo" width="120" class="img-fluid">
+                    <img src="/fedele/imagenes/fedele.png" alt="Logo" width="100" class="img-fluid">
                 </a>
             </div>
-            <div class="col-12 col-lg-4 text-center">
-                <div class="text-center w-100">
-                    <p class="mb-1 fw-bold text-secondary">
-                        Curso: <?= limpiarNombre($nombreCurso) ?>
-                    </p>
-                    <p id="texto-progreso" class="mb-1 text-muted small">
-                        <?= $progresoPorcentaje ?>% Completado: <?= $leccionesCompletadas ?>/<?= $totalLecciones ?> lecciones
-                    </p>
-                    <div class="progress" style="height: 16px;">
-                        <div id="barra-progreso" class="progress-bar progress-bar-striped progress-bar-animated custom-color"
-                            role="progressbar" style="width: <?= $progresoPorcentaje ?>%;" aria-valuenow="<?= $progresoPorcentaje ?>"
-                            aria-valuemin="0" aria-valuemax="100">
-                            <?= $progresoPorcentaje ?>%
-                        </div>
+            <div class="col-12 col-lg-4 text-center d-flex flex-column justify-content-center">
+                <p class="mb-1 fw-bold text-secondary">
+                    Curso: <?= limpiarNombre($nombreCurso) ?>
+                </p>
+                <p id="texto-progreso" class="mb-1 text-muted small">
+                    <?= $progresoPorcentaje ?>% Completado: <?= $leccionesCompletadas ?>/<?= $totalLecciones ?> lecciones
+                </p>
+                <div class="progress mx-auto" style="height: 16px; width: 80%;">
+                    <div id="barra-progreso" class="progress-bar progress-bar-striped progress-bar-animated custom-color"
+                        role="progressbar" style="width: <?= $progresoPorcentaje ?>%;" aria-valuenow="<?= $progresoPorcentaje ?>"
+                        aria-valuemin="0" aria-valuemax="100">
+                        <?= $progresoPorcentaje ?>%
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-lg-4 d-flex justify-content-center justify-content-lg-end">
+            <div class="col-12 col-lg-4 d-flex justify-content-center justify-content-lg-end align-items-center">
                 <div class="dropdown">
                     <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown">
                         👤 <?= htmlspecialchars($nombre); ?>
@@ -172,7 +205,7 @@ $progresoPorcentaje = ($totalLecciones > 0) ? round(($leccionesCompletadas / $to
                 </div>
             </div>
         </div>
-    </div>
+</div>
 
     <div class="layout">
         <div class="menu">

@@ -18,7 +18,7 @@ $nombre = $_SESSION['nombre'];
                     <a class="nav-link active"id="tablero-tab" data-bs-toggle="tab" data-bs-target="#tablero-tab-pane" role="tab" aria-controls="tablero-tab-pane" aria-selected="true"  href="#">Cursos</a>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <a class="nav-link" id="cursos-tab" data-bs-toggle="tab" data-bs-target="#cursos-tab-pane" role="tab" aria-controls="cursos-tab-pane" aria-selected="false" href="#">Representantes</a>
+                    <a class="nav-link" id="cursos-tab" data-bs-toggle="tab" data-bs-target="#repres-tab-pane" role="tab" aria-controls="repres-tab-pane" aria-selected="false" href="#">Representantes</a>
                 </li>
             </ul>
 
@@ -29,7 +29,7 @@ $nombre = $_SESSION['nombre'];
                 </button>
                 <ul class="menu dropdown-menu"> 
                     <li><a class="dropdown-item text-center" href="#">⚙️ CONFIGURACIÓN</a></li>
-                    <li><a class="dropdown-item text-center" href="/fedele/index.html">🚪 CERRAR SESIÓN</a></li>
+                    <li><a class="dropdown-item text-center" href="/fedele/componentes/php/logout.php">🚪 CERRAR SESIÓN</a></li>
                 </ul>
             </div>
         </div>
