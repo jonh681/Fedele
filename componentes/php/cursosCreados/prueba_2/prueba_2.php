@@ -115,7 +115,19 @@
                             </div>
                             <!-- TAB ACTIVIDADES -->
                             <div class="tab-pane fade" id="actividades-pane1" role="tabpanel" aria-labelledby="actividades-tab1" tabindex="0">
-                                <p>Hola desde Actividades1</p>
+                                <div class="container text-center" style="color: rgb(3, 187, 133); font-size: large;">
+                                    <div class="row">
+                                        <div class="col recurso-item" id="archivos1" onclick="showInputs('examen', this, 2)">
+                                            <i class="bi bi-file-text"></i><br><span>Examen</span>
+                                        </div>
+                                        <div class="col recurso-item" id="texto1" onclick="showInputs('actividad', this, 2)">
+                                            <i class="bi bi-body-text"></i><br><span>Subir actividad</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="inputsRecursos mt-3" id="inputsContainer2"></div>
+                                
                             </div>
                         </div>
                     </div>
@@ -433,6 +445,16 @@
 
                         <div class="text-end mt-3 mb-3">
                             <button class="btn btn-primary" onclick="generarPaginasLibro(${index})">Generar contenido por página</button>
+                        </div>
+
+                        <div id="contenedorPaginas${index}"></div>
+                    ` + generarBotonGuardar(index);
+                } else if (option === 'examen') {
+                    container.innerHTML = `
+                        <div class="form-floating mb-3 mt-3">
+                            <input type="text" class="form-control" id="titleInputExamen${index}" placeholder="Título del examen" 
+                                oninput="agregarPalabraLibro(${index})">
+                            <label for="titleInputLibro${index}">Título del examen</label>
                         </div>
 
                         <div id="contenedorPaginas${index}"></div>

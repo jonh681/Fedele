@@ -101,22 +101,6 @@
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
     
-    }
-
-    .recurso-item {
-        cursor: pointer;
-    }
-    
-    .recurso-item.selected {
-        background-color: #17a2b8; /* Cambiar el color de fondo para indicar selección */
-        color: white;
-        font-weight: bold;
-    }
-
-    [id^="offcanvasTopRecursos"] {
-        --bs-offcanvas-height: 50vh;
-    }
-
 
     .inputsRecursos{
         margin: 0 auto;

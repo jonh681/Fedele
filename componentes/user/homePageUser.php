@@ -64,10 +64,21 @@ $nombre = $_SESSION['nombre'];
                                             },
                                             initialView: 'dayGridMonth',
                                             events: eventos,
+                                            eventClick: function(info) {
+                                                const tabTrigger = document.querySelector('#home-tab');
+                                                if (tabTrigger) {
+                                                    const tab = new bootstrap.Tab(tabTrigger);
+                                                    tab.show(); // cambia al tab
+                                                }
+
+                                                const homePane = document.getElementById('home-tab-pane');
+                                            },
                                             dateClick: function(info) {
                                                 alert('Fecha: ' + info.dateStr);
-                                            }
-                                            
+                                            },
+                                            eventDidMount: function(info) {
+                                                info.el.style.cursor = 'pointer';
+                                            }                                                                                    
                                         });
 
                                         calendar.render();
@@ -216,8 +227,8 @@ $nombre = $_SESSION['nombre'];
                                                 );
 
                                                 const hoy = new Date();
-                                                const inicio = new Date(inscripcion.fecha_inicio + 'T12:00:00');
-                                                const fin = new Date(inscripcion.fecha_fin);
+                                                const inicio = new Date(inscripcion.fecha_inicio + 'T12:00:00'); // 🟢 CORRECTO
+                                                const fin = new Date(inscripcion.fecha_fin + 'T23:59:59');       // ✅ CORREGIDO
 
                                                 let estadoHTML = '';
                                                 if (hoy < inicio) {

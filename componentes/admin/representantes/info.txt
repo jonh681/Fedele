@@ -1,0 +1,9 @@
+Título: ejemplos de sistemas y tecnologías web
+Descripción: Algunos ejemplos de sistemas y tecnologías web más utilizados hoy en día incluyen:
+
+Sistemas de gestión de contenido (CMS): WordPress, Joomla, Drupal.
+Plataformas de comercio electrónico: Shopify, WooCommerce, Magento.
+Sistemas de gestión empresarial: SAP, Oracle ERP.
+Redes sociales: Facebook, Instagram, LinkedIn.
+Almacenamiento en la nube: Google Drive, Dropbox.
+URL: https://www.youtube.com/watch?v=tAPOnUCIa3s&ab_channel=Astraway

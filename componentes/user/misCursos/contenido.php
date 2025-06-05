@@ -10,6 +10,6 @@ $nombre = $_SESSION['nombre'];
             <h4>¡Hola <?php echo htmlspecialchars($nombre); ?>! estos son los cursos disponibles para ti.</h4>
         </div>
 
-        <div class="contenedorCursos row" style=" width: 73vh;  margin: 0% auto;">
+        <div class="contenedorCursos row" style=" width: 73vh;  margin: auto auto;">
         </div>
     </div>
