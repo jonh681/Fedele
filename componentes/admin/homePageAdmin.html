@@ -26,13 +26,27 @@
 
   <script>
     function cargarComponentes(id, archivo) {
-      fetch(archivo)
+      return fetch(archivo)
         .then(response => response.text())
         .then(data => {
-          document.getElementById(id).innerHTML = data;
+          const container = document.getElementById(id);
+          container.innerHTML = data;
+
+          // Ejecutar los scripts embebidos manualmente
+          const scripts = container.querySelectorAll("script");
+          scripts.forEach(oldScript => {
+            const newScript = document.createElement("script");
+            if (oldScript.src) {
+              newScript.src = oldScript.src;
+            } else {
+              newScript.textContent = oldScript.textContent;
+            }
+            document.body.appendChild(newScript);
+            oldScript.remove();
+          });
 
           if (id === "tablero-tab-pane") {
-            iniciarScriptsCursos(); // ejecuta scripts después de insertar contenido
+            iniciarScriptsCursos();
           }
         });
     }
@@ -69,7 +83,7 @@
                                 </div>
                                 <div class="col-md-8">
                                 <div class="card-body">
-                                    <h5 class="card-title">${curso.titulo}</h5>
+                                    <h5 class="card-title">${curso.TituloOriginal}</h5>
                                     <p class="card-text">${curso.descripcion}</p>
                                     <a href="/fedele/componentes/php/cursosCreados/${curso.titulo}/${curso.titulo}.php">Editar</a><br>
                                     <button class="btn btn-danger btn-sm mt-2" onclick="eliminarCurso('${curso.titulo}')">
@@ -152,13 +166,13 @@
       // función para crear el curso
       window.crearCurso = function () {
         const nombre = document.getElementById('nombreCurso').value.trim();
+        const nombreOriginal = document.getElementById('nombreCurso').value.trim();
         const imagen = document.getElementById('fileUpload').files[0];
         const nombreCorto = document.getElementById('nombreCorto').value.trim();
         const fechaInicio = document.getElementById('datestart').value.trim();
         const fechaFin = document.getElementById('dateend').value.trim();
         const descripcion = document.getElementById('descripcion').value.trim();
         const secciones = document.getElementById('secciones').value.trim();
-
 
         if (!nombre) {
           alert("Por favor, ingresa un nombre para el curso.");
@@ -167,6 +181,7 @@
 
         const formData = new FormData();
         formData.append('nombreCurso', nombre);
+        formData.append('nombreCurso', nombreOriginal);
         formData.append('nombreCorto', nombreCorto);
         formData.append('fechaInicio', fechaInicio);
         formData.append('fechaFin', fechaFin);
@@ -177,6 +192,11 @@
             formData.append('imagenCurso', imagen);
         }
 
+         // === LIMPIAR EL NOMBRE PARA USO EN RUTA ===
+        let nombreLimpio = nombreOriginal.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // quitar acentos
+        nombreLimpio = nombreLimpio.replace(/\s+/g, ''); // quitar espacios
+        nombreLimpio = nombreLimpio.replace(/[^A-Za-z0-9_-]/g, ''); // quitar caracteres no deseados
+
         fetch('/fedele/componentes/php/crearCursos.php', {
           method: 'POST',
           body: formData
@@ -184,8 +204,9 @@
         .then(res => res.text())
         .then(nombreArchivo => {
           alert("Curso creado correctamente: " + nombreArchivo);
-          window.open('/fedele/componentes/php/cursoscreados/' +nombre+ '/'+ nombreArchivo, '_blank');
-      });
+          console.log("la carpeta es",nombreLimpio);
+          window.open(`/fedele/componentes/php/cursoscreados/${nombreLimpio}/${nombreArchivo}`, '_blank');
+        });
 
         
       };  
@@ -218,7 +239,21 @@
     // cargar componentes iniciales
     cargarComponentes('header-container', 'headerAdmin/headerAdmin.php');
     cargarComponentes('tablero-tab-pane', 'cursos/contenidoAdmin.html');
-    cargarComponentes('repres-tab-pane', 'representantes/representantes.php');
+    cargarComponentes('repres-tab-pane', 'representantes/representantes.php').then(() => {
+      const tabBtn = document.querySelector('[data-bs-target="#repres-tab-pane"]');
+      if (tabBtn) {
+        tabBtn.addEventListener('shown.bs.tab', () => {
+          if (typeof crearGrafico === 'function') crearGrafico();
+          if (typeof crearGraficaBarras === 'function') crearGraficaBarras();
+        });
+
+        // Forzar activar pestaña si es la inicial
+        if (tabBtn.classList.contains('active')) {
+          if (typeof crearGrafico === 'function') crearGrafico();
+          if (typeof crearGraficaBarras === 'function') crearGraficaBarras();
+        }
+      }
+    });
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>

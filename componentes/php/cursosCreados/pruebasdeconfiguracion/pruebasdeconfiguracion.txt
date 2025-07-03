@@ -1,0 +1,6 @@
+Nombre original: pruebas de configuración
+Nombre corto: configuración
+Fecha de inicio: 2025-07-01T10:40
+Fecha de fin: 2025-07-03T10:40
+Descripción: preubas
+Secciones: 2

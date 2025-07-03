@@ -1,3 +1,0 @@
-
-    ID: 1, Título: Prueba 1
-ID: 2, Título: prueba 2

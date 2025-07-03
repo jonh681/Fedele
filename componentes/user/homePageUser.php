@@ -51,7 +51,7 @@ $nombre = $_SESSION['nombre'];
                                     .then(cursos => {
                                         // Convertimos los cursos en eventos
                                         const eventos = cursos.map(curso => ({
-                                            title: curso.titulo,
+                                            title: curso.TituloOriginal,
                                             start: curso.fechaInicio,
                                             end: curso.fechaFin
                                         }));
@@ -129,7 +129,7 @@ $nombre = $_SESSION['nombre'];
                                                         </div>
                                                         <div class="col-md-8" style="color:#234db8;">
                                                             <div class="card-body">
-                                                                <h5 class="card-title">${ curso.titulo}</h5>
+                                                                <h5 class="card-title">${ curso.TituloOriginal}</h5>
                                                                 <p class="card-text">${curso.descripcion}</p>
                                                                 <p class="card-text"><strong>Inicio: ${curso.fechaInicio}</strong></p>
                                                                 <p class="card-text"><strong>Fin: ${curso.fechaFin}</strong></p>
@@ -258,7 +258,7 @@ $nombre = $_SESSION['nombre'];
                                                             </div>
                                                             <div class="col-md-8 d-flex align-items-center">
                                                                 <div class="card-body text-center w-100">
-                                                                    <h5 class="card-title mb-2">${curso.titulo}</h5>
+                                                                    <h5 class="card-title mb-2">${curso.TituloOriginal}</h5>
                                                                     <p class="card-text mb-2">${curso.descripcion}</p>
                                                                     <span class="badge bg-success mb-2">Inscrito</span><br>
 

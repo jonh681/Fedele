@@ -20,11 +20,13 @@ if (is_dir($directorioCursos)) {
 
             $archivoTxt = $rutaCurso . '/' . $nombreCurso . '.txt';
             if (file_exists($archivoTxt)) {
-                $contenido = file_get_contents($archivoTxt);
+                $contenido = file_get_contents($archivoTxt); 
+                preg_match('/Nombre original:\s*(.*)/', $contenido, $no);
                 preg_match('/Nombre corto:\s*(.*)/', $contenido, $nc);
                 preg_match('/Fecha de inicio:\s*(.*)/', $contenido, $fi);
                 preg_match('/Fecha de fin:\s*(.*)/', $contenido, $ff);
                 preg_match('/Descripción:\s*(.*)/', $contenido, $desc);
+                $nombreOriginal = $no[1] ?? '';
                 $nombreCorto = $nc[1] ?? '';
                 $fechaInicio = $fi[1] ?? '';
                 $fechaFin = $ff[1] ?? '';
@@ -41,6 +43,7 @@ if (is_dir($directorioCursos)) {
             }
 
             $cursos[] = [
+                'TituloOriginal' => $nombreOriginal,
                 'titulo' => $nombreCurso,
                 'nombreCorto' => $nombreCorto,
                 'fechaInicio' => $fechaInicio,

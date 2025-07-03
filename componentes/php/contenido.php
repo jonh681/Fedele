@@ -109,9 +109,9 @@ $esLibro = stripos($subcarpeta, 'Libro') !== false;
     ?>
 
     <div class="container p-4 bg-white" style="color:#234db8;">
-        <h4 class="mb-3" style="text-align: justify;">
+        <!-- <h4 class="mb-3" style="text-align: justify;">
             <?= htmlspecialchars($titulo) ?>
-        </h4>
+        </h4> -->
 
         <div class="d-flex justify-content-between align-items-center mb-3 p-2 border rounded shadow-sm bg-light">
             <div>

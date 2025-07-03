@@ -10,8 +10,21 @@ $conn = getConexion(); //
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre = $_POST['nombreCurso'] ?? 'curso_sin_nombre';
 
-    // Sanitiza el nombre para que sea válido como archivo/carpeta
-    $nombreLimpiado = preg_replace('/[^A-Za-z0-9_-]/', '_', $nombre);
+    $nombre = strtr($nombre, [
+        'á' => 'a', 'é' => 'e', 'í' => 'i',
+        'ó' => 'o', 'ú' => 'u', 'Á' => 'A',
+        'É' => 'E', 'Í' => 'I', 'Ó' => 'O',
+        'Ú' => 'U', 'ñ' => 'n', 'Ñ' => 'N'
+    ]);
+
+    // Eliminar espacios
+    $nombre = str_replace(' ', '', $nombre);
+
+    // Eliminar cualquier carácter que no sea letra, número, guion medio o guion bajo
+    $nombreLimpiado = preg_replace('/[^A-Za-z0-9_-]/', '', $nombre);
+
+    // // Sanitiza el nombre para que sea válido como archivo/carpeta
+    // $nombreLimpiado = preg_replace('/[^A-Za-z0-9_-]/', '', $nombre);
     $nombreArchivo = $nombreLimpiado . '.php';
 
     $sqlCrearTabla = "
@@ -19,6 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         `nombre_seccion` VARCHAR(255) NOT NULL,
         `nombre_leccion` VARCHAR(255) NOT NULL,
         `id_leccion` INT NOT NULL,
+        `nombre_seccion_original` VARCHAR(255) NOT NULL,
+        `nombre_leccion_original` VARCHAR(255) NOT NULL,
         PRIMARY KEY (`nombre_seccion`, `id_leccion`)
     );
     ";
@@ -29,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("Error al crear la tabla de lecciones: " . $conn->error);
     }
 
-
+    $nombreOriginal =$_POST['nombreCurso'] ?? 'curso_sin_nombre';
     $nombreCorto = $_POST['nombreCorto'] ?? 'sin_nombre_corto';
     $fechaInicio = $_POST['fechaInicio'] ?? 'sin_fecha_inicio';
     $fechaFin = $_POST['fechaFin'] ?? 'sin_fecha_fin';
@@ -57,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <html lang=\"es\">
     <head>
         <meta charset=\"UTF-8\">
-        <title>$nombre</title>
+        <title>$nombreOriginal</title>
         <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css\" rel=\"stylesheet\" />
         <link href=\"https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css\" rel=\"stylesheet\" />
         <link rel=\"stylesheet\" href=\"diseñoContenido.css\">
@@ -68,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <a href=\"/fedele/componentes/admin/HomePageAdmin.html\"><img src=\"/fedele/imagenes/fedele.png\" width=\"120\" alt=\"\"></a>
             </div>
             <div style=\" width: 100%;\">
-                <h1 class=\"text-center my-4\">Bienvenido al curso: $nombre</h1>
+                <h1 class=\"text-center my-4\">Bienvenido al curso: $nombreOriginal</h1>
             </div>
         </div>
         <div class=\"container mt-3\">
@@ -540,6 +555,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
 
+            function normalizarTexto(texto) {
+                return texto
+                    .normalize(\"NFD\")                         // separar acentos
+                    .replace(/[\u0300-\u036f]/g, \"\")          // quitar acentos
+                    .replace(/\s+/g, \"\")                      // quitar espacios
+                    .replace(/[^a-zA-Z0-9_-]/g, \"\")           // quitar otros símbolos
+                    .toLowerCase();
+            }
+
             function cargarRecursos(nombreSeccion, numSeccion) {
                 console.log('cargarRecursos llamado con:', { nombreSeccion, numSeccion });
                 fetch('listar_recursos.php')
@@ -547,9 +571,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     .then(data => {
                         console.log('📦 Data que llega del servidor:', data);
                         const recursosArray = Array.isArray(data) ? data : Object.values(data);
+                        console.log(\"🔍 Comparando con sección:\", nombreSeccion);
+                        console.log(\"🔍 Secciones en data:\", recursosArray.map(r => r.seccion));
+                        
 
                         const recursosFiltrados = recursosArray.filter(r => 
-                            r.seccion.trim().toLowerCase() === nombreSeccion.trim().toLowerCase()
+                            normalizarTexto(r.seccion) === normalizarTexto(nombreSeccion)
                         );
 
                         recursosFiltrados.sort((a, b) => a.fecha - b.fecha);
@@ -784,60 +811,85 @@ $contenidoCSS = "
     include(__DIR__ . \"/../../conexion.php\");
     \$conn = getConexion();
 
-    // Comprobar conexión
-    if (!\$conn || \$conn->connect_error) {
-        die(\"❌ Error de conexión a la base de datos: \" . \$conn->connect_error);
+    // Función robusta para normalizar texto para uso en nombres de carpetas, BD, etc.
+    function normalizarNombre(\$texto) {
+        \$texto = mb_convert_encoding(\$texto, 'UTF-8', 'auto');
+        \$texto = strtr(\$texto, [
+            'á' => 'a', 'é' => 'e', 'í' => 'i',
+            'ó' => 'o', 'ú' => 'u', 'Á' => 'A',
+            'É' => 'E', 'Í' => 'I', 'Ó' => 'O',
+            'Ú' => 'U', 'ñ' => 'n', 'Ñ' => 'N'
+        ]);
+        \$texto = preg_replace('/\s+/', ' ', \$texto);
+        \$texto = trim(\$texto);
+        \$texto = preg_replace('/[^A-Za-z0-9_-]/', '', \$texto);
+        return strtolower(\$texto);
     }
 
     if (\$_SERVER['REQUEST_METHOD'] === 'POST') {
-        echo \"📥 Datos recibidos:
-    \";
+        echo \"📥 Datos recibidos:\n\";
         print_r(\$_POST);
 
-        \$tituloRecurso = trim(\$_POST['tituloRecurso'] ?? 'sin_titulo');
+        // Obtener y normalizar título
+        \$tituloOriginal = trim(\$_POST['tituloRecurso'] ?? 'sin_titulo');
+        \$tituloRecurso = normalizarNombre(\$tituloOriginal); // Usado en BD y como carpeta
+
         \$esLibro = \$_POST['esLibro'];
         \$numPaginas = \$_POST['numPaginas'] ?? 1;
         \$descripcion = trim(\$_POST['descripcion'] ?? '');
         \$url = trim(\$_POST['url'] ?? '');
-        \$seccion = trim(\$_POST['seccion'] ?? 'sin_seccion');
-        \$curso = trim(\$_POST['curso'] ?? '');
+
+        // Validación y limpieza de sección
+        if (!isset(\$_POST['seccion'])) {
+            die(\"🚫 El campo 'seccion' no fue enviado.\");
+        }
+
+        \$seccionCruda = \$_POST['seccion'];
+        \$seccionPreliminar = preg_replace('/\s+/', ' ', \$seccionCruda);
+        \$seccionPreliminar = trim(\$seccionPreliminar);
+        \$nombreSeccion = normalizarNombre(\$seccionPreliminar);
+
+        // Curso
+        \$cursoOriginal = trim(\$_POST['curso'] ?? '');
+        \$nombreTabla = normalizarNombre(\$cursoOriginal);
+
+        echo \"\n🧾 Título original: '\$tituloOriginal'\";
+        echo \"\n📁 Título normalizado: '\$tituloRecurso'\";
+        echo \"\n📁 Sección normalizada: '\$nombreSeccion'\";
+        echo \"\n📁 Tabla: '\$nombreTabla'\";
 
         if (empty(\$tituloRecurso)) {
             die(\"❌ Título no especificado.\");
         }
 
-        \$nombreTabla    = preg_replace('/[^A-Za-z0-9_]/', '_', \$curso);
-        \$nombreSeccion  = preg_replace('/[^A-Za-z0-9_ -]/', ' ', \$seccion);
+        echo \"\n🛠 Procesando inserción en tabla: \$nombreTabla\";
 
-        echo \"
-        🛠 Procesando inserción en tabla: \$nombreTabla\";
-
-        // Verificar existencia de tabla
+        // Verificar tabla
         \$verificar = \$conn->query(\"SHOW TABLES LIKE '\$nombreTabla'\");
         if (!\$verificar || \$verificar->num_rows === 0) {
             die(\"❌ La tabla '\$nombreTabla' no existe.\");
         }
 
-        // Obtener siguiente id_leccion
+        // Obtener siguiente ID
         \$stmt = \$conn->prepare(\"SELECT MAX(id_leccion) as max_id FROM `\$nombreTabla`\");
         \$stmt->execute();
         \$resultado = \$stmt->get_result()->fetch_assoc();
         \$nuevoId = (\$resultado['max_id'] ?? 0) + 1;
 
-        echo \"📌 ID siguiente para '\$nombreSeccion': \$nuevoId\";
+        echo \"\n📌 ID siguiente para '\$nombreSeccion': \$nuevoId\";
 
-        // Insertar
-        \$stmtInsert = \$conn->prepare(\"INSERT INTO `\$nombreTabla` (nombre_seccion, nombre_leccion, id_leccion) VALUES (?, ?, ?)\");
-        \$stmtInsert->bind_param(\"ssi\", \$nombreSeccion, \$tituloRecurso, \$nuevoId);
+        // Insertar lección con título normalizado
+        \$stmtInsert = \$conn->prepare(\"INSERT INTO `\$nombreTabla` (nombre_seccion, nombre_leccion, id_leccion, nombre_seccion_original, nombre_leccion_original) VALUES (?, ?, ?, ?, ?)\");
+        \$stmtInsert->bind_param(\"ssiss\", \$nombreSeccion, \$tituloRecurso, \$nuevoId, \$seccionPreliminar, \$tituloOriginal);
 
-         if (\$stmtInsert->execute()) {
-            echo \"✅ Lección '\$tituloRecurso' insertado en sección '\$nombreSeccion' con ID \$nuevoId\";
+        if (\$stmtInsert->execute()) {
+            echo \"\n✅ Lección '\$tituloRecurso' insertada en sección '\$nombreSeccion' con ID \$nuevoId\";
         } else {
-            echo \"❌ Error al insertar: \" . \$stmtInsert->error . \"\n\";
+            echo \"\n❌ Error al insertar: \" . \$stmtInsert->error;
         }
-
+        
         if (\$esLibro === \"true\"){
-
+            echo \"📚 Si es un libro, guardando libro...\";
             \$paginas = json_decode(\$_POST['paginas'], true);
 
             if (!\$paginas) {
@@ -879,7 +931,8 @@ $contenidoCSS = "
                 }
 
                 // Guardar el contenido de la página
-                \$infoPagina = \"Texto: \$texto\nURL: \$urlPagina\";
+                \$infoPagina = \"Texto: \$texto 
+                                URL: \$urlPagina\";
                 file_put_contents(\$rutaPagina . \"/pagina\$index.txt\", \$infoPagina);  // Guardar el archivo de texto con la información de la página
 
                 // Si hay archivos subidos (imágenes, documentos), guardarlos
@@ -889,39 +942,38 @@ $contenidoCSS = "
                     move_uploaded_file(\$_FILES[\"imagen\$index\"]['tmp_name'], \$archivoDestino);
                 }
             }
-        } else{
-            echo \"📚 No es un libro, guardando de forma normal...\n\";
-
+        }else{
+            echo \"📚 No es un libro, guardando de forma normal...\";
+            // Rutas con nombres normalizados
             \$rutaSeccion = __DIR__ . '/recursos/' . \$nombreSeccion;
             \$rutaRecurso = \$rutaSeccion . '/' . \$tituloRecurso;
 
-            // Crear las carpetas si no existen
             if (!file_exists(\$rutaSeccion)) {
                 mkdir(\$rutaSeccion, 0777, true);
-                chmod(\$rutaRecurso, 0755);
+                chmod(\$rutaSeccion, 0755);
             }
             if (!file_exists(\$rutaRecurso)) {
                 mkdir(\$rutaRecurso, 0777, true);
                 chmod(\$rutaRecurso, 0755);
             }
-            // Guardar archivo info.txt
-            \$info = \"Título: \$tituloRecurso\nDescripción: \$descripcion\nURL: \$url\";
 
+            // Guardar info.txt con título original
+            \$info = \"Título: \$tituloOriginal\nDescripción: \$descripcion\nURL: \$url\";
             file_put_contents(\"\$rutaRecurso/info.txt\", \$info);
 
-            // Guardar archivo subido
             if (isset(\$_FILES['archivo']) && \$_FILES['archivo']['error'] === UPLOAD_ERR_OK) {
                 \$archivoDestino = \"\$rutaRecurso/\" . basename(\$_FILES['archivo']['name']);
                 move_uploaded_file(\$_FILES['archivo']['tmp_name'], \$archivoDestino);
             }
 
-            echo \"✅ Recurso guardado exitosamente en: \$rutaRecurso\";
-        }
+            echo \"\n✅ Recurso guardado exitosamente en: \$rutaRecurso\";
+            }
 
-    }  else {
+    } else {
         echo \"⚠️ Esta ruta solo acepta POST.\";
-    } 
+    }
     ?>
+
     ";
 
     $contenidoPHP4 = "
@@ -1051,7 +1103,8 @@ $contenidoCSS = "
     }
 
     // Guardar información adicional
-    $contenidoInfo = "Nombre corto: $nombreCorto\n";
+    $contenidoInfo = "Nombre original: $nombreOriginal\n";
+    $contenidoInfo .= "Nombre corto: $nombreCorto\n";
     $contenidoInfo .= "Fecha de inicio: $fechaInicio\n";
     $contenidoInfo .= "Fecha de fin: $fechaFin\n";
     $contenidoInfo .= "Descripción: $descripcion\n";

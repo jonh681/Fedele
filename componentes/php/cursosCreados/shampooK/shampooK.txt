@@ -1,0 +1,6 @@
+Nombre original: shampooK
+Nombre corto: prueba5
+Fecha de inicio: 2025-07-01T14:37
+Fecha de fin: 2025-07-03T14:37
+Descripción: gdfdfs
+Secciones: 1

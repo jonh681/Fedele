@@ -226,17 +226,25 @@
                 formData.append('imagenCurso', imagen);
             }
 
-            fetch('/fedele/componentes/php/crearCurso.php', {
+            fetch('/fedele/componentes/php/crearCursos.php', {
                 method: 'POST',
                 body: formData // NO pongas headers aquí, el navegador los configura automáticamente
             })
             .then(res => res.text())
             .then(nombreArchivo => {
                 alert("✅ Curso creado correctamente: " + nombreArchivo);
-                // Redirige al curso
-                const nombreCarpeta = nombre.replace(/[^A-Za-z0-9_-]/g, '_');
-                window.location.href = `/fedele/componentes/php/cursosCreados/${nombreCarpeta}/${nombreArchivo}`;
-                window.location.replace(ruta);
+                // Reemplazar letras con acentos por su equivalente sin acento
+                let nombre = nombreArchivo.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+                // Eliminar espacios
+                nombre = nombre.replace(/\s+/g, '');
+                console.log(nombre);
+
+                // Eliminar cualquier carácter que no sea letra, número, guion o guion bajo
+                // const nombreCarpeta = nombre.replace(/[^A-Za-z0-9_-]/g, '');
+
+                // window.location.href = `/fedele/componentes/php/cursosCreados/${nombreArchivo}/${nombreArchivo}`;
+                // window.location.replace(ruta);
             })
             .catch(error => {
                 console.error('Error:', error);

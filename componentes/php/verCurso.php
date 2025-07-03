@@ -31,7 +31,7 @@ $stmt->fetch();
 $stmt->close();
 
 // Obtener todas las lecciones del curso desde su tabla
-$stmt = $conn->prepare("SELECT nombre_seccion, nombre_leccion, id_leccion FROM `$nombreCurso` ORDER BY id_leccion ASC");
+$stmt = $conn->prepare("SELECT nombre_seccion, nombre_leccion, id_leccion, nombre_seccion_original, nombre_leccion_original FROM `$nombreCurso` ORDER BY id_leccion ASC");
 $stmt->execute();
 $resultado = $stmt->get_result();
 
@@ -41,10 +41,18 @@ while ($row = $resultado->fetch_assoc()) {
     $seccion = $row['nombre_seccion'];
     $leccion = $row['nombre_leccion'];
     $id = (int)$row['id_leccion'];
+    $seccion_original = $row['nombre_seccion_original'];
+    $leccion_original = $row['nombre_leccion_original'];
+
 
     // Agrupar por sección
     $estructura[$seccion][] = [
         'leccion' => $leccion,
+        'id' => $id
+    ];
+    $estructuraOriginal[$seccion][] = [
+        'leccion' => $leccion_original,
+        'seccion' => $seccion_original,
         'id' => $id
     ];
 
@@ -210,33 +218,37 @@ $progresoPorcentaje = ($totalLecciones > 0) ? round(($leccionesCompletadas / $to
     <div class="layout">
         <div class="menu">
             <div class="accordion" id="accordionSecciones">
-                <?php foreach ($estructura as $nombreSeccion => $lecciones): ?>
-                    <?php $idSeccion = 'seccion_' . md5($nombreSeccion); ?>
+                <?php foreach ($estructura as $claveSeccion => $lecciones): ?>
+                    <?php
+                        $idSeccion = 'seccion_' . md5($claveSeccion);
+                        $seccionOriginal = $estructuraOriginal[$claveSeccion][0]['seccion'] ?? $claveSeccion;
+                    ?>
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="heading<?= $idSeccion ?>">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                     data-bs-target="#collapse<?= $idSeccion ?>" aria-expanded="false"
                                     aria-controls="collapse<?= $idSeccion ?>">
-                                <?= limpiarNombre($nombreSeccion) ?>
+                                <?= htmlspecialchars($seccionOriginal) ?>
                             </button>
                         </h2>
                         <div id="collapse<?= $idSeccion ?>" class="accordion-collapse collapse"
-                             aria-labelledby="heading<?= $idSeccion ?>" data-bs-parent="#accordionSecciones">
+                            aria-labelledby="heading<?= $idSeccion ?>" data-bs-parent="#accordionSecciones">
                             <div class="accordion-body p-0">
                                 <div class="list-group list-group-flush">
-                                    <?php foreach ($lecciones as $leccion): ?>
+                                    <?php foreach ($lecciones as $index => $leccion): ?>
                                         <?php
                                             $bloqueado = ($ultimoId === -1) ? ($leccion['id'] > 1) : ($leccion['id'] > $ultimoId + 1);
                                             $clase = $bloqueado ? 'bloqueado text-muted' : '';
+                                            $leccionOriginal = $estructuraOriginal[$claveSeccion][$index]['leccion'] ?? $leccion['leccion'];
                                         ?>
                                         <a href="#"
                                         class="list-group-item list-group-item-action px-3 cargar-subcarpeta <?= $clase ?>"
                                         data-idseccion="<?= $idSeccion ?>"
                                         data-curso="<?= htmlspecialchars($nombreCurso) ?>"
-                                        data-seccion="<?= htmlspecialchars($nombreSeccion) ?>"
+                                        data-seccion="<?= htmlspecialchars($claveSeccion) ?>"
                                         data-subcarpeta="<?= htmlspecialchars($leccion['leccion']) ?>"
                                         data-id="<?= $leccion['id'] ?>">
-                                           <?= limpiarNombre($leccion['leccion']) ?>
+                                        <?= htmlspecialchars($leccionOriginal) ?>
                                         </a>
                                     <?php endforeach; ?>
                                 </div>
